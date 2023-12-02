@@ -67,13 +67,21 @@
     margin-top: 40px;
     width: 70%;
     height: 500px;
-   border: 2px solid red;
+    //border: 2px solid red;
 }
 .b-agregar{
     text-align: center;
     margin-top: 40px;
     width: 30%;
     height: 500px;
-    border: 2px solid red;
+    //border: 2px solid red;
 
+}
+.botonagregar{
+     // background-color: #971E3C;
+     color: #fff;
+     font-size: 15px;
+     cursor:pointer;
+     width: 180px;
+     background-color: #0B3668;
 }
