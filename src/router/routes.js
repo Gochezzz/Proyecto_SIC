@@ -4,7 +4,21 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: () => import('pages/Login.vue') }
+    ]
+  },
+  {
+    path: '/panel',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Panel-Card.vue') }
+    ]
+  },
+  {
+    path: '/catalogo',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Catalogo-Cuentas.vue') }
     ]
   },
 

@@ -1,1 +1,79 @@
 // app global css in SCSS form
+.Ordenar{
+    display:flex;
+}
+.login{
+    margin-top: 100px;
+    width: 50%;
+    height: 500px;
+   // border: 2px solid red;
+}
+.ImgP{
+    margin-top: 100px;
+    width: 50%;
+    height: 500px;
+   // border: 2px solid red;
+}
+.login p{
+    font-size: 50px;
+    margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    color:#000000;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.q-input{
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+    margin: 0 auto;
+    width: 500px;
+    background:transparent;
+    padding-left: 40px; /* Espacio para el icono */
+    font-size: 18px;
+    outline: none;
+}
+.botoniniciar{
+    margin-left: 38px !important;
+    margin-top: 15px;
+   // background-color: #971E3C;
+    color: #fff;
+    font-size: 15px;
+    cursor:pointer;
+    width: 460px;
+}
+.botoncerrar{
+   // background-color: #971E3C;
+    color: #fff;
+    font-size: 15px;
+    cursor:pointer;
+    width: 180px;
+    margin-top: 3px !important;
+    background-color: #0B3668;
+}
+.form{
+    text-align: center;
+    //border: 2px solid red;
+}
+.configh{
+    height: 70px;
+    background-color: #CEE5EF;
+}
+.titulo{
+    margin-top: 6px;
+    color: #0B3668;
+}
+.tabla{
+    margin-left: 40px;
+    margin-top: 40px;
+    width: 70%;
+    height: 500px;
+   border: 2px solid red;
+}
+.b-agregar{
+    text-align: center;
+    margin-top: 40px;
+    width: 30%;
+    height: 500px;
+    border: 2px solid red;
+
+}
