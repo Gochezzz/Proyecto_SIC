@@ -67,6 +67,11 @@
     margin-left: 430px !important;
     color: #0B3668;
 }
+.tituloV{
+    margin-top: 6px;
+    margin-left: 455px !important;
+    color: #0B3668;
+}
 .tabla{
     margin-left: 40px;
     margin-top: 40px;
@@ -122,4 +127,16 @@
     width: 275px;
     padding: 0;
 
+}
+.efect:hover{
+    transform: scale(1.05) !important;
+    transition: 0.8s !important;
+}
+.change-color:hover{
+    color:#FAC238 !important;
+    transition: 0.8s !important;
+}
+.change-color.q-card:hover .q-icon {
+    color: #FAC238 !important;
+    transition: 0.8s !important;
 }

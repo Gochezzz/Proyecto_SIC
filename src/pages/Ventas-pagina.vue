@@ -4,8 +4,8 @@
         <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
           <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
           <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
-          <q-toolbar-title class="tituloC" style="font-size: 40px;margin-left: 325px;">
-            Compras
+          <q-toolbar-title class="tituloV" style="font-size: 40px;margin-left: 350px;">
+            Ventas
           </q-toolbar-title >
           <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
         </q-toolbar>
@@ -49,7 +49,7 @@
     const router = useRouter();
 
     defineComponent({
-        name: 'Compras-pagina'
+        name: 'Ventas-pagina'
     });
     
     const regresar = () => {
@@ -57,12 +57,14 @@
     };
     
     const columns = [
-        { name: 'Factura', align: 'left', label: 'Factura', field: 'factura', sortable: true },
+        { name: 'Codigo Factura', align: 'left', label: 'Codigo Factura', field: 'factura', sortable: true },
         { name: 'Fecha', align: 'left', label: 'Fecha', field: 'fecha', sortable: true },
-        { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'proveedor', sortable: true },
+        { name: 'Cliente', align: 'left', label: 'Cliente', field: 'cliente', sortable: true },
         { name: 'Concepto', align: 'left', label: 'Concepto', field: 'concepto', sortable: true },
         { name: 'Cantidad', align: 'left', label: 'Cantidad', field: 'cantidad', sortable: true },
-        { name: 'Valor', align: 'left', label: 'Valor', field: 'valor', sortable: true },
+        { name: 'P/U', align: 'left', label: 'P/U', field: 'preciou', sortable: true },
+        { name: 'IVA', align: 'left', label: 'IVA', field: 'iva', sortable: true },
+        { name: 'Total', align: 'left', label: 'Total', field: 'total', sortable: true },
     ];
     
     const rows = ref([]);
@@ -86,4 +88,3 @@
     color: #0B3668; /* Cambia el color del texto según tus necesidades */
   }
 </style>
-  

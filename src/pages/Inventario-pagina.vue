@@ -5,7 +5,7 @@
           <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
           <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
           <q-toolbar-title class="tituloC" style="font-size: 40px;margin-left: 325px;">
-            Compras
+            Inventario
           </q-toolbar-title >
           <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
         </q-toolbar>
@@ -49,7 +49,7 @@
     const router = useRouter();
 
     defineComponent({
-        name: 'Compras-pagina'
+        name: 'Inventario-pagina'
     });
     
     const regresar = () => {
@@ -57,12 +57,12 @@
     };
     
     const columns = [
-        { name: 'Factura', align: 'left', label: 'Factura', field: 'factura', sortable: true },
-        { name: 'Fecha', align: 'left', label: 'Fecha', field: 'fecha', sortable: true },
+        { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codeAr', sortable: true },
+        { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
+        { name: 'Existencia', align: 'left', label: 'Existencia', field: 'existencia', sortable: true },
+        { name: 'C/U', align: 'left', label: 'C/U', field: 'cu', sortable: true },
+        { name: 'P/U', align: 'left', label: 'P/U', field: 'pu', sortable: true },
         { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'proveedor', sortable: true },
-        { name: 'Concepto', align: 'left', label: 'Concepto', field: 'concepto', sortable: true },
-        { name: 'Cantidad', align: 'left', label: 'Cantidad', field: 'cantidad', sortable: true },
-        { name: 'Valor', align: 'left', label: 'Valor', field: 'valor', sortable: true },
     ];
     
     const rows = ref([]);
@@ -86,4 +86,3 @@
     color: #0B3668; /* Cambia el color del texto según tus necesidades */
   }
 </style>
-  

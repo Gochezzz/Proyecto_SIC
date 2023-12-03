@@ -13,7 +13,7 @@
           <q-input type="text" v-model="Login.user" placeholder="nombre" label="Usuario"/>
           <q-input type="password" v-model="Login.password" placeholder="**********" label="Contraseña"/>
           <q-btn 
-            class="botoniniciar" 
+            class="botoniniciar efect" 
             color="secondary"
             label="Iniciar Sesion"
             style="padding-left: 20px; padding-right: 20px"

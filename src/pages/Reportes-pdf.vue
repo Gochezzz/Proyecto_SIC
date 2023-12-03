@@ -1,19 +1,15 @@
 <template>
     <div class="row">
-      <q-header class="text-white configh">
-        <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
-          <q-toolbar-title class="titulo" style="font-size: 40px;">
-            Panel de Control
-          </q-toolbar-title >
-          <q-btn 
-            class="botoncerrar efect" 
-            label="Cerrar Sesion"
-            style="padding-left: 20px; padding-right: 20px"
-            @click="CerrarSesion"
-          />
-          <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 3px;color:#0B3668"/>
-        </q-toolbar>
-      </q-header>
+        <q-header class="text-white configh">
+            <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
+                <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
+                <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
+                <q-toolbar-title class="tituloC" style="font-size: 40px;margin-left: 325px;">
+                    Reporte
+                </q-toolbar-title >
+                <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
+            </q-toolbar>
+        </q-header>
       <div class="row" style="margin-top: 30px;">
         <div
           class="col-6 col-sm-3"
@@ -54,55 +50,54 @@
     import { ref, defineComponent} from "vue";
     const router = useRouter();
 
+    const regresar = () => {
+        router.push("/panel");
+    };
     
     const opciones = ref([
         {
             id: 1,
-            url: "library_books",
-            titulo: "Catalogo de Cuentas",
-            link: "catalogo",
+            url: "assignment",
+            titulo: "Estado de resultados",
+            link: "",
         },
         {
             id: 2,
-            url: "local_mall",
-            titulo: "Compras",
-            link: "compras",
+            url: "event_note",
+            titulo: "Estado de capital contable del propietario",
+            link: "",
         },
         {
             id: 3,
-            url: "price_check",
-            titulo: "Ventas",
-            link: "ventas",
+            url: "balance",
+            titulo: "Balance General",
+            link: "",
         },
         {
             id: 4,
-            url: "archive",
-            titulo: "Inventario",
-            link: "inventario",
+            url: "trending_up",
+            titulo: "Estado de flujo de efectivo",
+            link: "",
         },
         {
             id: 5,
-            url: "book",
-            titulo: "Libro Diario",
+            url: "account_circle",
+            titulo: "Clientes",
             link: "",
         },
         {
             id: 6,
-            url: "poll",
-            titulo: "Reportes",
-            link: "reportes",
+            url: "account_circle",
+            titulo: "Proveedores",
+            link: "",
         },
-        // Agrega más objetos según sea necesario
     ]);
     
     defineComponent({
-        name: 'Panel-Card'
+        name: 'Reportes-pdf'
     })
     const funcionParaRedirigir = (link) => {
-        router.push("/"+link);
-    };
-    const CerrarSesion = () => {
-        router.push("/");
+        router.push("/panel"+link);
     };
 
 

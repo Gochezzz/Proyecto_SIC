@@ -2,8 +2,8 @@
     <div>
       <q-header class="text-white configh">
         <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
-          <q-icon name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#FAC238" @click="regresar"/>
-          <q-label style="font-size: 40px;color: #FAC238;text-align: left;margin-left: 5px;">Regresar</q-label>
+          <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
+          <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
           <q-toolbar-title class="titulo" style="font-size: 40px;margin-left: 325px;">
             Catalogo de Cuentas
           </q-toolbar-title >
@@ -13,7 +13,7 @@
       <div class="Ordenar" style="margin-top: 30px;">
         <div class="tabla">
           <q-table
-                :rows="rows"
+                :rows="data"
                 :columns="columns"
                 row-key="codigo"
                 :row-class="customRowClass"
@@ -41,7 +41,7 @@
         </div>
         <div class="b-agregar">
             <q-btn 
-                class="botonagregar" 
+                class="botonagregar efect" 
                 label="Agregar Cuenta"
                 style="padding-left: 20px; padding-right: 20px"
                 @click="mostrarDrawer"
@@ -82,7 +82,7 @@
                     </div>
                </div>
                <q-btn 
-                    class="botonagregar" 
+                    class="botonagregar efect" 
                     label="Crear"
                     style="padding-left: 20px; padding-right: 20px"
                     @click="Subirdata"
@@ -98,13 +98,14 @@
     import { useRouter } from "vue-router";
     import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
     import { collection, addDoc, getDocs, doc} from "firebase/firestore";
+    import { useCollection } from "vuefire";
     import swal from "sweetalert";
     
     const router = useRouter();
 
     const MostrarDrawer = ref(false);
 
-
+    const data = useCollection(collection(db,"Catalogo"));
     const datos = ref({
         tipo: "",
         codigo: "",
@@ -123,21 +124,6 @@
         { name: 'codigo', align: 'left', label: 'Código', field: 'codigo', sortable: true },
         { name: 'nombre', align: 'left', label: 'Nombre de Cuenta', field: 'nombre', sortable: true },
     ];
-    
-    const rows = ref([]);
-    onMounted(async () => {
-        try {
-            const querySnapshot = await getDocs(collection(db, "Catalogo"));
-            const data = [];
-            querySnapshot.forEach((doc) => {
-                data.push({ ...doc.data(), id: doc.id });
-            });
-            rows.value = data;
-            console.log("Data from Firebase:", rows.value);
-        } catch (e) {
-            console.error("Error getting documents: ", e);
-        }
-    });
     
     const customRowClass = (row) => {
         return {
@@ -173,15 +159,12 @@
             text: "La cuenta se creo correctamente",
             icon: "success",
             buttons: false,
-            timer: 3500,
+            timer: 3000,
             });
             MostrarDrawer.value = false;
             datos.value.tipo = "";
             datos.value.codigo = "";
             datos.value.nombre = "";
-            setTimeout(() => {
-                location.reload();
-            }, 5000); // El tiempo está en milisegundos, por lo que 4000 ms equivalen a 4 segundos
         } catch (e) {
             console.error("Error adding document: ", e);
         }
