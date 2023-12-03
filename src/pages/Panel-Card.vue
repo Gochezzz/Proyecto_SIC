@@ -66,7 +66,7 @@
             id: 2,
             url: "local_mall",
             titulo: "Compras",
-            link: "",
+            link: "compras",
         },
         {
             id: 3,
