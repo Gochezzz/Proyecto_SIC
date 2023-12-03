@@ -59,37 +59,37 @@
             id: 1,
             url: "assignment",
             titulo: "Estado de resultados",
-            link: "",
+            link: "EstadoR",
         },
         {
             id: 2,
             url: "event_note",
             titulo: "Estado de capital contable del propietario",
-            link: "",
+            link: "EstadoC",
         },
         {
             id: 3,
             url: "balance",
             titulo: "Balance General",
-            link: "",
+            link: "Balance",
         },
         {
             id: 4,
-            url: "trending_up",
+            url: "query_stats",
             titulo: "Estado de flujo de efectivo",
-            link: "",
+            link: "EstadoFE",
         },
         {
             id: 5,
             url: "account_circle",
             titulo: "Clientes",
-            link: "",
+            link: "Cliente",
         },
         {
             id: 6,
             url: "account_circle",
             titulo: "Proveedores",
-            link: "",
+            link: "Provee",
         },
     ]);
     
@@ -97,7 +97,7 @@
         name: 'Reportes-pdf'
     })
     const funcionParaRedirigir = (link) => {
-        router.push("/panel"+link);
+        router.push("/"+link);
     };
 
 
