@@ -52,8 +52,6 @@ const Login = ref({
 });
 const IniciarSesion = () => {
   signInWithRedirect(auth, provider);
-
-  //router.push("/panel");
 };
 
 function redirigirPanel() {

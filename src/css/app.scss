@@ -2,6 +2,11 @@
 .Ordenar{
     display:flex;
 }
+.libroD{
+    display:inline-block;
+    border: 2px solid red;
+    width: 100%;
+}
 .login{
     margin-top: 100px;
     width: 50%;
@@ -102,6 +107,11 @@
     margin-left: 410px !important;
     color: #0B3668;
 }
+.tituloLD{
+    margin-top: 6px;
+    margin-left: 414px !important;
+    color: #0B3668;
+}
 .tabla{
     margin-left: 40px;
     margin-top: 40px;
@@ -169,4 +179,17 @@
 .change-color.q-card:hover .q-icon {
     color: #FAC238 !important;
     transition: 0.8s !important;
+}
+//librodiario
+.fLibro{
+    display: flex;
+    margin-left: 45px;
+    margin-right: 45px;
+    height: 50px;
+    border: 2px solid red;
+}
+.tablaLD{
+    margin-top: 45px;
+    margin-left: 45px;
+    margin-right: 45px;
 }

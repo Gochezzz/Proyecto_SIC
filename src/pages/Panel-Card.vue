@@ -103,7 +103,7 @@ const opciones = ref([
     id: 5,
     url: "book",
     titulo: "Libro Diario",
-    link: "",
+    link: "libro",
   },
   {
     id: 6,
