@@ -105,6 +105,14 @@ const routes = [
       { path: '', component: () => import('pages/Libro-Diario.vue') }
     ]
   },
+  {
+    path: '/transaccion',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requireAuth: true },
+    children: [
+      { path: '', component: () => import('pages/Transacciones-p.vue') }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it

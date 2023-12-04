@@ -111,6 +111,12 @@ const opciones = ref([
     titulo: "Reportes",
     link: "reportes",
   },
+  {
+    id: 7,
+    url: "currency_exchange",
+    titulo: "Transacciones",
+    link: "transaccion",
+  },
   // Agrega más objetos según sea necesario
 ]);
 

@@ -63,8 +63,8 @@
     };
     
     const columns = [
-        { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codigoc', sortable: true },
-        { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombrec', sortable: true },
+        { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codigop', sortable: true },
+        { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombrep', sortable: true },
         { name: 'Existencia', align: 'left', label: 'Existencia', field: 'cantidad', sortable: true },
         { name: 'P/U', align: 'left', label: 'P/U', field: 'cu', sortable: true },
         { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'nombret', sortable: true },

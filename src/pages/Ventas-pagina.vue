@@ -67,7 +67,7 @@
         { name: 'Cliente', align: 'left', label: 'Cliente', field: 'nombret', sortable: true },
         { name: 'Concepto', align: 'left', label: 'Concepto', field: 'concepto', sortable: true },
         { name: 'Cantidad', align: 'left', label: 'Cantidad', field: 'cantidad', sortable: true },
-        { name: 'P/U', align: 'left', label: 'P/U', field: 'cu', sortable: true },
+        { name: 'P/U', align: 'left', label: 'P/U', field: 'pv', sortable: true },
         { name: 'IVA', align: 'left', label: 'IVA', field: 'iva', sortable: true },
         { name: 'Total', align: 'left', label: 'Total', field: 'total', sortable: true },
     ];
