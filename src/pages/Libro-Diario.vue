@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="cuadroDE">
-                    <q-card flat bordered>
+                    <q-card flat bordered style="border-radius: 10px;">
                         <q-card-section>
                             <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Código Cta</label>
                             <q-select
