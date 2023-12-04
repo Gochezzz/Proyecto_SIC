@@ -13,7 +13,7 @@
       <div class="Ordenar" style="margin-top: 30px;">
         <div class="tablaC">
           <q-table
-                :rows="rows"
+                :rows="tablacl"
                 :columns="columns"
                 row-key="codigo"
                 :row-class="customRowClass"
@@ -43,8 +43,13 @@
     </div>
 </template>
 <script setup>
-    import { useRouter } from "vue-router";
     import { defineComponent, ref} from 'vue';
+    import { useRouter } from "vue-router";
+    import {db} from "boot/firebase";
+    import { collection} from "firebase/firestore";
+    import { useCollection } from "vuefire";
+
+    const tablacl = useCollection(collection(db,"Cliente"));
     
     const router = useRouter();
 
@@ -57,12 +62,10 @@
     };
     
     const columns = [
-        { name: 'Factura', align: 'left', label: 'Factura', field: 'factura', sortable: true },
-        { name: 'Fecha', align: 'left', label: 'Fecha', field: 'fecha', sortable: true },
+        { name: 'Cliente', align: 'left', label: 'Cliente', field: 'nombret', sortable: true },
+        { name: 'Código del Cliente', align: 'left', label: 'Código del Cliente', field: 'codigot', sortable: true },
     ];
     
-    const rows = ref([]);
-   
     const customRowClass = (row) => {
         return {
         'custom-row-class': true,

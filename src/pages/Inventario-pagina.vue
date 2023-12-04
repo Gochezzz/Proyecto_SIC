@@ -13,7 +13,7 @@
       <div class="Ordenar" style="margin-top: 30px;">
         <div class="tablaC">
           <q-table
-                :rows="rows"
+                :rows="tablai"
                 :columns="columns"
                 row-key="codigo"
                 :row-class="customRowClass"
@@ -43,8 +43,14 @@
     </div>
 </template>
 <script setup>
-    import { useRouter } from "vue-router";
     import { defineComponent, ref} from 'vue';
+    import { useRouter } from "vue-router";
+    import {db} from "boot/firebase";
+    import { collection} from "firebase/firestore";
+    import { useCollection } from "vuefire";
+
+    const tablai = useCollection(collection(db,"Proveedor"));
+
     
     const router = useRouter();
 
@@ -57,15 +63,13 @@
     };
     
     const columns = [
-        { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codeAr', sortable: true },
-        { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-        { name: 'Existencia', align: 'left', label: 'Existencia', field: 'existencia', sortable: true },
-        { name: 'C/U', align: 'left', label: 'C/U', field: 'cu', sortable: true },
-        { name: 'P/U', align: 'left', label: 'P/U', field: 'pu', sortable: true },
-        { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'proveedor', sortable: true },
+        { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codigoc', sortable: true },
+        { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombrec', sortable: true },
+        { name: 'Existencia', align: 'left', label: 'Existencia', field: 'cantidad', sortable: true },
+        { name: 'P/U', align: 'left', label: 'P/U', field: 'cu', sortable: true },
+        { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'nombret', sortable: true },
     ];
     
-    const rows = ref([]);
    
     const customRowClass = (row) => {
         return {

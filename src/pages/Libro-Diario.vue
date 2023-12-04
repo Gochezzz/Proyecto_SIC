@@ -13,59 +13,119 @@
       <div class="libroD" style="margin-top: 30px;">
             <div class="fLibro">
                 <div class="cuadroIZ">
-                    <q-input
-                        style="max-width: 300px; background-color: rgb(216, 242, 242)"
-                        filled
-                        dense
-                        v-model="date"
-                        mask="date"
-                        :rules="['date']"
-                    >
-                        <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                            >
-                            <q-date v-model="date">
-                                <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
+                    <q-card flat bordered class="tarjetaI" style="border-radius: 10px;">
+                        <q-card-section style="display: flex;">
+                            <div style="margin-left: 12px;">
+                                <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Fecha</label>
+                                <q-input
+                                    class="modI"
+                                    style="max-width: 300px; background-color: #CEE5EF"
+                                    filled
+                                    dense
+                                    v-model="datos.fecha"
+                                    mask="date"
+                                >
+                                    <template v-slot:append>
+                                        <q-icon name="event" class="cursor-pointer" style="color:#0B3668">
+                                            <q-popup-proxy
+                                            cover
+                                            transition-show="scale"
+                                            transition-hide="scale"
+                                            >
+                                            <q-date v-model="datos.fecha">
+                                                <div class="row items-center justify-end">
+                                                <q-btn v-close-popup label="Close" color="primary" flat />
+                                                </div>
+                                            </q-date>
+                                            </q-popup-proxy>
+                                        </q-icon>
+                                    </template>
+                                </q-input>
+                            </div>
+                        </q-card-section>
+                        <q-card-section style="display: flex;">
+                            <div style="margin-left: 12px;">
+                                <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Nombre Tercero</label>
+                                <q-input
+                                v-model="datos.nombret"
+                                autogrow
+                                />
+                            </div>
+                            <div style="margin-left: 12px;">
+                                <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Código Tercero</label>
+                                <q-input
+                                v-model="datos.codigot"
+                                autogrow
+                                />
+                            </div>
+                            <div style="margin-left: 12px;">
+                                <q-checkbox v-model="cliente" label="Cliente" @click="toggleTercero('cliente')" style="color:#0B3668"/>
+                                <br />
+                                <q-checkbox v-model="proveedor" label="Proveedor" @click="toggleTercero('proveedor')" style="color:#0B3668"/>
+                            </div>
+                        </q-card-section>
+                        <q-card-section style="display: flex;">
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Tipo de Documento</label>
+                                    <q-select
+                                    style="width: 200px"
+                                    v-model="datos.tipod"
+                                    :options="Tipos"
+                                    label="Tipo de Documento"
+                                    />
                                 </div>
-                            </q-date>
-                            </q-popup-proxy>
-                        </q-icon>
-                        </template>
-                    </q-input>
-                    <div style="display: flex; margin-top: 30px">
-                        <q-input v-model="text" label="Cliente/Proveedor" />
-                        <q-input style="margin-left: 20px" v-model="text" label="Codigo C/P" />
-                    </div>
-                    <div style="display: flex; margin-top: 30px">
-                        <q-select
-                        style="width: 200px"
-                        v-model="model"
-                        :options="options"
-                        label="Tipo de Documento"
-                        />
-                        <q-input
-                        style="margin-left: 20px"
-                        v-model="text"
-                        label="Codigo soporte"
-                        />
-                        <q-input style="margin-left: 20px" v-model="text" label="Documento" />
-                    </div>
-                    <div style="margin-top: 30px">
-                        <p>Concepto</p>
-                        <q-input v-model="text" filled autogrow />
-                    </div>
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Código Soporte</label>
+                                    <q-input
+                                    v-model="datos.codigos"
+                                    autogrow
+                                    />
+                                </div>
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Documento</label>
+                                    <q-input
+                                    v-model="datos.documento"
+                                    autogrow
+                                    />
+                                </div>
+                        </q-card-section>
+                        <q-card-section style="display: flex;">
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Cantidad</label>
+                                    <q-input
+                                    v-model="datos.cantidad"
+                                    autogrow
+                                    />
+                                </div>
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">C/U</label>
+                                    <q-input
+                                    v-model="datos.cu"
+                                    autogrow
+                                    />
+                                </div>
+                                <div style="margin-left: 12px;">
+                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Total</label>
+                                    <q-input
+                                    v-model="datos.total"
+                                    autogrow
+                                    />
+                                </div>
+                        </q-card-section>
+                        <q-card-section >
+                            <div style="margin-left: 12px;">
+                                <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Concepto</label>
+                                <q-input class="modI"  v-model="datos.concepto" filled autogrow style="max-width: 99%;" />
+                            </div>
+                        </q-card-section>
+                    </q-card>
                 </div>
                 <div class="cuadroDE">
                     <q-card flat bordered style="border-radius: 10px;">
                         <q-card-section>
                             <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Código Cta</label>
                             <q-select
-                                v-model="datos.codigo"
+                                v-model="datos.codigoc"
                                 :options="mostrarSelecCodigo"
                                 label="código"
                                 class="col-5 col-md-3 q-mx-sm"
@@ -76,9 +136,9 @@
                         <q-card-section>
                             <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Nombre Cta</label>
                             <q-select
-                                v-model="datos.nombre"
+                                v-model="datos.nombrec"
                                 :options="mostrarSelecCuenta"
-                                label="código"
+                                label="nombre"
                                 class="col-5 col-md-3 q-mx-sm"
                                 dense
                                 style="color:#0B3668;margin-top: 10px;margin-left: 12px;"
@@ -88,7 +148,7 @@
                             <div style="margin-left: 12px;">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Debe</label>
                                 <q-input
-                                v-model="nuevoAnuncio"
+                                v-model="datos.debe"
                                 autogrow
                                 dense
                             />
@@ -96,7 +156,7 @@
                             <div style="margin-left: 42px;">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Haber</label>
                                 <q-input
-                                    v-model="nuevoAnuncio"
+                                    v-model="datos.haber"
                                     autogrow
                                     dense
                                 />
@@ -115,7 +175,7 @@
             </div>
             <div class="tablaLD">
                 <q-table
-                    :rows="rows"
+                    :rows="tablal"
                     :columns="columns"
                     row-key="codigo"
                     :row-class="customRowClass"
@@ -147,13 +207,17 @@
 <script setup>
     import { useRouter } from "vue-router";
     import { defineComponent, ref, onMounted} from 'vue';
-    import { collection, getDocs} from "firebase/firestore";
-    import { useCollection } from "vuefire";
     import {db} from "boot/firebase";
+    import { collection, addDoc, getDocs} from "firebase/firestore";
+    import swal from "sweetalert";
+    import { useCollection } from "vuefire";
+
     const router = useRouter();
 
-    const date = ref("2012/09/11");
+    const Tipos =  ['Activo', 'Pasivo']
 
+    const tablal = useCollection(collection(db,"Libro_Diario"));
+    
     defineComponent({
         name: 'Libro-Diario'
     });
@@ -163,12 +227,12 @@
     };
     
     const columns = [
-        { name: 'Factura', align: 'left', label: 'Factura', field: 'factura', sortable: true },
-        { name: 'Fecha', align: 'left', label: 'Fecha', field: 'fecha', sortable: true },
+        { name: 'Código Cta', align: 'left', label: 'Código Cta', field: 'codigoc', sortable: true },
+        { name: 'Nombre Cta', align: 'left', label: 'Nombre Cta', field: 'nombrec', sortable: true },
+        { name: 'Debe', align: 'left', label: 'Debe', field: 'debe', sortable: true },
+        { name: 'Haber', align: 'left', label: 'Haber', field: 'haber', sortable: true },
     ];
     
-    const rows = ref([]);
-   
     const customRowClass = (row) => {
         return {
         'custom-row-class': true,
@@ -176,10 +240,29 @@
     };
     //Jalando DATA para los select cuenta y codigo cta
     const datos = ref({
-        tipo: "",
-        codigo: "",
-        nombre: "",
+        tipod: "",
+        codigoc: "",
+        nombrec: "",
+        debe: "",
+        haber: "",
+        fecha: "",
+        nombret: "",
+        codigot: "",
+        codigos: "",
+        documento: "",
+        concepto: "",
+        cantidad: "",
+        cu: "",
+        total: "",
     });
+
+    let cliente = ref(false);
+    let proveedor = ref(false);
+
+    const toggleTercero = (marca) => {
+        cliente.value = marca === "cliente";
+        proveedor.value = marca === "proveedor";
+    };
     
     const mostrarCuenta = [];
     const mostrarSelecCuenta = ref();
@@ -198,6 +281,82 @@
     onMounted(() => {
         cargarDatos();
     });
+    async function agregar() {
+        try {
+            const valordatos = Object.values(datos.value);
+            if (valordatos.some((valor) => !valor)) {
+            swal({
+                title: "Esperaa!",
+                text: "Debes llenar todos los campos",
+                icon: "warning",
+                buttons: false,
+                timer: 3500,
+            });
+            return; // Detener la ejecución si al menos un campo está vacío
+            }
+            if(cliente.value){
+
+                const docRef = await addDoc(collection(db, "Cliente"), datos.value);
+                const docRefL = await addDoc(collection(db, "Libro_Diario"), datos.value);
+                console.log("Document written with ID: ", docRef.id);
+                console.log("Document written with ID: ", docRefL.id);
+                swal({
+                title: "Muy Bien",
+                text: "La cuenta se creo correctamente",
+                icon: "success",
+                buttons: false,
+                timer: 3000,
+                });
+                datos.value.tipod = "";
+                datos.value.codigoc = "";
+                datos.value.nombrec = "";
+                datos.value.debe = "";
+                datos.value.haber = "";
+                datos.value.fecha = "";
+                datos.value.nombret = "";
+                datos.value.codigot = "";
+                datos.value.codigos = "";
+                datos.value.documento = "";
+                datos.value.concepto = "";
+                datos.value.cantidad = "";
+                datos.value.cu = "";
+                datos.value.total = "";
+                cliente.value = false;
+
+            }else{
+                if(proveedor.value){
+                    const docRef = await addDoc(collection(db, "Proveedor"), datos.value);
+                    const docRefL = await addDoc(collection(db, "Libro_Diario"), datos.value);
+                    console.log("Document written with ID: ", docRef.id);
+                    console.log("Document written with ID: ", docRefL.id);
+                    swal({
+                    title: "Muy Bien",
+                    text: "La cuenta se creo correctamente",
+                    icon: "success",
+                    buttons: false,
+                    timer: 3000,
+                    });
+                    datos.value.tipod = "";
+                    datos.value.codigoc = "";
+                    datos.value.nombrec = "";
+                    datos.value.debe = "";
+                    datos.value.haber = "";
+                    datos.value.fecha = "";
+                    datos.value.nombret = "";
+                    datos.value.codigot = "";
+                    datos.value.codigos = "";
+                    datos.value.documento = "";
+                    datos.value.concepto = "";
+                    datos.value.cantidad = "";
+                    datos.value.cu = "";
+                    datos.value.total = "";
+                    proveedor.value = false;
+                }
+            }
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    }
 </script>
   
 <style scoped>

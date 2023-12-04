@@ -188,7 +188,7 @@
 .fLibro{
     display: flex;
     width: 100%;
-    height: 600px;
+    height: 700px;
     //border: 2px solid red;
     border-radius: 10px;
     background-color: #CEE5EF
@@ -200,13 +200,17 @@
 //inputs
 .cuadroIZ{
     width: 60%;
-    height: 500px;
+    height: 600px;
     margin-top: 45px;
     margin-left: 45px;
     margin-right: 22px;
     margin-bottom: 45px;
     border-radius: 10px;
-    background-color: white;
+    //border: 2px solid red;
+}
+.tarjetaI{
+    width:100%;
+    height: 100%;
     //border: 2px solid red;
 }
 .cuadroDE{
@@ -223,8 +227,15 @@
     text-align: center;
     padding: 20px;
     box-sizing: border-box; /* Asegura que el relleno no incremente el tamaño total */
-  }
-  
-  .left-side {
+}
+
+.left-side {
     background-color: $primary; /* Color de fondo para el lado izquierdo */
-  }
+}
+.modI{
+    padding-left: 0px !important;
+   
+}
+.q-checkbox__bg{
+    color:#CEE5EF;
+}
