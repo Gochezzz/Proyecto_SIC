@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <q-header class="text-white configh">
+    <q-header class="text-white configh" style="margin-bottom: 30px !important;">
       <q-toolbar
         style="
           display: inline-flex;
@@ -77,33 +77,33 @@ const router = useRouter();
 const opciones = ref([
   {
     id: 1,
+    url: "book",
+    titulo: "Libro Diario",
+    link: "libro",
+  },
+  {
+    id: 2,
     url: "library_books",
     titulo: "Catalogo de Cuentas",
     link: "catalogo",
   },
   {
-    id: 2,
+    id: 3,
     url: "local_mall",
     titulo: "Compras",
     link: "compras",
   },
   {
-    id: 3,
+    id: 4,
     url: "price_check",
     titulo: "Ventas",
     link: "ventas",
   },
   {
-    id: 4,
+    id: 5,
     url: "archive",
     titulo: "Inventario",
     link: "inventario",
-  },
-  {
-    id: 5,
-    url: "book",
-    titulo: "Libro Diario",
-    link: "libro",
   },
   {
     id: 6,
