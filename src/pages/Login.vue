@@ -8,22 +8,10 @@
     <div class="login">
       <p>Iniciar Sesion</p>
       <div class="form">
-        <q-input
-          type="text"
-          v-model="Login.user"
-          placeholder="nombre"
-          label="Usuario"
-        />
-        <q-input
-          type="password"
-          v-model="Login.password"
-          placeholder="**********"
-          label="Contraseña"
-        />
         <q-btn
           class="botoniniciar efect"
           color="secondary"
-          label="Iniciar Sesion"
+          label="Iniciar Sesion con Google"
           style="padding-left: 20px; padding-right: 20px"
           @click="IniciarSesion"
         />
@@ -72,11 +60,6 @@ onMounted(() => {
   }
   getRedirectResult(auth)
     .then((result) => {
-      // This gives you a Google Access Token. You can use it to access Google APIs.
-      //const credential = GoogleAuthProvider.credentialFromResult(result);
-      //const token = credential.accessToken;
-
-      // The signed-in user info.
       redirigirPanel();
       const user = result.user;
       console.log(user);
