@@ -82,6 +82,7 @@
           style="padding-left: 20px; padding-right: 20px"
           @click="mostrarDrawer"
         />
+
         <q-btn
           class="botonagregar efect"
           color="red"
@@ -89,6 +90,7 @@
           style="padding-left: 20px; padding-right: 20px; margin-top: 10px"
           @click="elmininarCuenta"
         />
+
         <q-drawer
           class="Drawg"
           side="right"
