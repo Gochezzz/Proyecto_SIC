@@ -44,19 +44,13 @@
 </template>
 <script setup>
     import { useRouter } from "vue-router";
-    import { defineComponent, ref, onMounted} from 'vue';
     import {db} from "boot/firebase";
-    import { collection, addDoc, getDocs} from "firebase/firestore";
-    import swal from "sweetalert";
+    import { collection} from "firebase/firestore";
     import { useCollection } from "vuefire";
 
     const router = useRouter();
 
     const tablal = useCollection(collection(db,"Libro_Diario"));
-    
-    defineComponent({
-        name: 'Libro-Diario'
-    });
     
     const regresar = () => {
         router.push("/panel");

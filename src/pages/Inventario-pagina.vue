@@ -43,7 +43,6 @@
     </div>
 </template>
 <script setup>
-    import { defineComponent, ref} from 'vue';
     import { useRouter } from "vue-router";
     import {db} from "boot/firebase";
     import { collection} from "firebase/firestore";
@@ -53,10 +52,6 @@
 
     
     const router = useRouter();
-
-    defineComponent({
-        name: 'Inventario-pagina'
-    });
     
     const regresar = () => {
         router.push("/panel");

@@ -69,7 +69,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, defineComponent } from "vue";
+import { ref} from "vue";
 import { signOut } from "firebase/auth";
 import { auth } from "src/boot/firebase";
 const router = useRouter();
@@ -120,9 +120,6 @@ const opciones = ref([
   // Agrega más objetos según sea necesario
 ]);
 
-defineComponent({
-  name: "Panel-Card",
-});
 const funcionParaRedirigir = (link) => {
   router.push("/" + link);
 };

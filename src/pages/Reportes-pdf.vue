@@ -47,7 +47,7 @@
   
   <script setup>
     import { useRouter } from "vue-router";
-    import { ref, defineComponent} from "vue";
+    import { ref} from "vue";
     const router = useRouter();
 
     const regresar = () => {
@@ -93,9 +93,6 @@
         },
     ]);
     
-    defineComponent({
-        name: 'Reportes-pdf'
-    })
     const funcionParaRedirigir = (link) => {
         router.push("/"+link);
     };

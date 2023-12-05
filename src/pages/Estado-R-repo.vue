@@ -44,14 +44,10 @@
 </template>
 <script setup>
     import { useRouter } from "vue-router";
-    import { defineComponent, ref} from 'vue';
+    import { ref} from 'vue';
     
     const router = useRouter();
 
-    defineComponent({
-        name: 'Estado-R-repo'
-    });
-    
     const regresar = () => {
         router.push("/reportes");
     };

@@ -97,8 +97,8 @@
 <script setup>
     import {db} from "boot/firebase";
     import { useRouter } from "vue-router";
-    import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
-    import { collection, addDoc, getDocs, doc} from "firebase/firestore";
+    import { ref} from 'vue';
+    import { collection, addDoc} from "firebase/firestore";
     import { useCollection } from "vuefire";
     import swal from "sweetalert";
 
@@ -116,10 +116,7 @@
         codigo: "",
         nombre: "",
     });
-    const Tipos =  ['Activo', 'Pasivo']
-    defineComponent({
-        name: 'Catalogo-Cuentas'
-    });
+    const Tipos =  ['Activo', 'Pasivo', 'Patrimonio', 'Gasto', 'Ingreso', 'Cuenta de Cierre']
     
     const regresar = () => {
         router.push("/panel");

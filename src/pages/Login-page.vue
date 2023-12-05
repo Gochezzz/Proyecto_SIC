@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { defineComponent, onMounted, ref } from "vue";
+import { onMounted, ref} from "vue";
 import { useRouter } from "vue-router";
 import { auth, provider } from "src/boot/firebase";
 import { signInWithRedirect, getRedirectResult } from "firebase/auth";
@@ -49,10 +49,6 @@ function redirigirPanel() {
     console.log(auth.currentUser);
   }
 }
-
-defineComponent({
-  name: "IndexPage",
-});
 
 onMounted(() => {
   if (auth.currentUser) {

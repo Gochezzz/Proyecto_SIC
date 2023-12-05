@@ -43,7 +43,6 @@
     </div>
 </template>
 <script setup>
-    import { defineComponent, ref} from 'vue';
     import { useRouter } from "vue-router";
     import {db} from "boot/firebase";
     import { collection} from "firebase/firestore";
@@ -52,10 +51,6 @@
     const router = useRouter();
 
     const tablac = useCollection(collection(db,"Proveedor"));
-
-    defineComponent({
-        name: 'Compras-pagina'
-    });
     
     const regresar = () => {
         router.push("/panel");

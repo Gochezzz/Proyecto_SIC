@@ -92,14 +92,6 @@
                                     dense
                                     />
                                 </div>
-                                <div style="margin-left: 12px;">
-                                    <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Documento</label>
-                                    <q-input
-                                    v-model="datos.documento"
-                                    autogrow
-                                    dense
-                                    />
-                                </div>
                         </q-card-section>
                         <q-card-section style="display: flex;">
                                 <div style="margin-left: 12px;">
@@ -238,15 +230,15 @@
 </template>
 <script setup>
     import { useRouter } from "vue-router";
-    import { defineComponent, ref, onMounted} from 'vue';
+    import {ref, onMounted} from 'vue';
     import {db} from "boot/firebase";
     import { collection, addDoc, getDocs} from "firebase/firestore";
     import swal from "sweetalert";
 
     const router = useRouter();
 
-    const Tipos =  ['Activo', 'Pasivo']
-    const Iva =  ['13%',"-"]
+    const Tipos =  ['Factura de Venta', 'Comprobante de Egreso', 'Recibo de Caja', 'Factura de Compra', 'Comprobante de Contabilidad', 'Nota de Credito']
+    const Iva =  ['13%',"Ninguno"]
     function calcular() {
         let cantidad = parseFloat(datos.value.cantidad);
         let cu = parseFloat(datos.value.cu);
@@ -262,9 +254,6 @@
             console.log("No son numeros");
         }
     }
-    defineComponent({
-        name: 'Transacciones-p'
-    });
     
     const regresar = () => {
         router.push("/panel");
@@ -281,7 +270,6 @@
         nombret: "",
         codigot: "",
         codigos: "",
-        documento: "",
         concepto: "",
         cantidad: "",
         cu: "",
@@ -356,7 +344,6 @@
                 datos.value.nombret = "";
                 datos.value.codigot = "";
                 datos.value.codigos = "";
-                datos.value.documento = "";
                 datos.value.concepto = "";
                 datos.value.cantidad = "";
                 datos.value.cu = "";
@@ -390,7 +377,6 @@
                     datos.value.nombret = "";
                     datos.value.codigot = "";
                     datos.value.codigos = "";
-                    datos.value.documento = "";
                     datos.value.concepto = "";
                     datos.value.cantidad = "";
                     datos.value.cu = "";
