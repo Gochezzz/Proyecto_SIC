@@ -49,6 +49,7 @@
             <q-drawer class="Drawg" side="right" bordered v-if="MostrarDrawer" show-if-above>
                <div class="dT">
                     <q-label style="font-size: 20px;color:white;text-align: center;">Ingresar Cuentas</q-label>
+                    <q-icon class="change-color" name="cancel" style="font-size: 30px; margin-left: 15px;margin-top: 4px;color:red" @click="cerrarDrawer"/>
                </div>
                <div class="datosF" style="margin-top: 10px;">
                     <div class="separar">
@@ -100,7 +101,11 @@
     import { collection, addDoc, getDocs, doc} from "firebase/firestore";
     import { useCollection } from "vuefire";
     import swal from "sweetalert";
-    
+
+    const cerrarDrawer = () => {
+        MostrarDrawer.value = false;
+    };
+
     const router = useRouter();
 
     const MostrarDrawer = ref(false);

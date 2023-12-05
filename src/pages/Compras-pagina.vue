@@ -66,7 +66,7 @@
         { name: 'Fecha', align: 'left', label: 'Fecha', field: 'fecha', sortable: true },
         { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'nombret', sortable: true },
         { name: 'Concepto', align: 'left', label: 'Concepto', field: 'concepto', sortable: true },
-        { name: 'P/U', align: 'left', label: 'P/U', field: 'cu', sortable: true },
+        { name: 'C/U', align: 'left', label: 'C/U', field: 'cu', sortable: true },
         { name: 'Cantidad', align: 'left', label: 'Cantidad', field: 'cantidad', sortable: true },
         { name: 'Total', align: 'left', label: 'Total', field: 'total', sortable: true },
     ];

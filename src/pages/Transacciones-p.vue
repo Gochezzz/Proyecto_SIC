@@ -134,6 +134,14 @@
                                     dense
                                     />
                                 </div>
+                                <div style="margin-left: 12px;">
+                                    <q-btn
+                                        class="botoncalcular efect"
+                                        label="Calcular"
+                                        style="margin-left: 10px;"
+                                        @click="calcular"
+                                    />
+                                </div>
                         </q-card-section>
                         <q-card-section >
                             <div style="margin-left: 12px;">
@@ -234,13 +242,26 @@
     import {db} from "boot/firebase";
     import { collection, addDoc, getDocs} from "firebase/firestore";
     import swal from "sweetalert";
-    import { useCollection } from "vuefire";
 
     const router = useRouter();
 
     const Tipos =  ['Activo', 'Pasivo']
     const Iva =  ['13%',"-"]
-    
+    function calcular() {
+        let cantidad = parseFloat(datos.value.cantidad);
+        let cu = parseFloat(datos.value.cu);
+        let pv = parseFloat(datos.value.pv);
+        let totales = 0;
+        let totalesv = 0;
+        if (Number.isFinite(cantidad) && Number.isFinite(cu)&& Number.isFinite(pv)) {
+            totales = cantidad * cu;
+            totalesv = cantidad * pv;
+            datos.value.total = totales;
+            datos.value.totalv = totalesv;
+        } else {
+            console.log("No son numeros");
+        }
+    }
     defineComponent({
         name: 'Transacciones-p'
     });
@@ -266,6 +287,7 @@
         cu: "",
         total: "",
         //
+        totalv: "",
         iva:"",
         nombrep:"",
         codigop:"",

@@ -50,6 +50,15 @@
     margin-top: 3px !important;
     background-color: #0B3668;
 }
+.botoncalcular{
+    // background-color: #971E3C;
+     color: #fff;
+     font-size: 15px;
+     cursor:pointer;
+     width: 130px;
+     margin-top: 3px !important;
+     background-color: #0B3668;
+ }
 .form{
     text-align: center;
     //border: 2px solid red;
@@ -150,6 +159,9 @@
     align-items: center;
     border: 2px solid #0B3668;
     border-radius: 2px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 .Drawg{
     background-color: #CEE5EF;

@@ -66,7 +66,8 @@
         { name: 'Código Articulo', align: 'left', label: 'Código Articulo', field: 'codigop', sortable: true },
         { name: 'Nombre', align: 'left', label: 'Nombre', field: 'nombrep', sortable: true },
         { name: 'Existencia', align: 'left', label: 'Existencia', field: 'cantidad', sortable: true },
-        { name: 'P/U', align: 'left', label: 'P/U', field: 'cu', sortable: true },
+        { name: 'C/U', align: 'left', label: 'C/U', field: 'cu', sortable: true },
+        { name: 'P/V', align: 'left', label: 'P/V', field: 'pv', sortable: true },
         { name: 'Proveedor', align: 'left', label: 'Proveedor', field: 'nombret', sortable: true },
     ];
     
