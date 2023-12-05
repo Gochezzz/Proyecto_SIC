@@ -1,6 +1,7 @@
 // app global css in SCSS form
 .Ordenar{
     display:flex;
+    background-size: cover;
 }
 .login{
     margin-top: 100px;
@@ -36,10 +37,12 @@
     margin-left: 38px !important;
     margin-top: 15px;
    // background-color: #971E3C;
-    color: #fff;
+    color: white;
+    background-color: #0B3668;
     font-size: 15px;
     cursor:pointer;
     width: 460px;
+    height: 70px;
 }
 .botoncerrar{
    // background-color: #971E3C;
