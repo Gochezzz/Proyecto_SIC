@@ -7,13 +7,11 @@ const routes = [
   {
     path: "/panel",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [{ path: "", component: () => import("pages/Panel-Card.vue") }],
   },
   {
     path: "/catalogo",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [
       { path: "", component: () => import("pages/Catalogo-Cuentas.vue") },
     ],
@@ -21,7 +19,6 @@ const routes = [
   {
     path: "/compras",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [
       { path: "", component: () => import("pages/Compras-pagina.vue") },
     ],
@@ -29,7 +26,6 @@ const routes = [
   {
     path: "/ventas",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [
       { path: "", component: () => import("pages/Ventas-pagina.vue") },
     ],
@@ -37,7 +33,6 @@ const routes = [
   {
     path: "/inventario",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [
       { path: "", component: () => import("pages/Inventario-pagina.vue") },
     ],
@@ -45,14 +40,12 @@ const routes = [
   {
     path: "/reportes",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
     children: [{ path: "", component: () => import("pages/Reportes-pdf.vue") }],
   },
   //reportes.
   {
     path: '/EstadoR',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Estado-R-repo.vue') }
     ]
@@ -60,7 +53,6 @@ const routes = [
   {
     path: '/EstadoC',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Estado-C-repo.vue') }
     ]
@@ -68,7 +60,6 @@ const routes = [
   {
     path: '/Balance',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Balance-repo.vue') }
     ]
@@ -76,7 +67,6 @@ const routes = [
   {
     path: '/EstadoFE',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Estado-F-E-repo.vue') }
     ]
@@ -84,7 +74,6 @@ const routes = [
   {
     path: '/Cliente',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Cliente-repo.vue') }
     ]
@@ -92,7 +81,6 @@ const routes = [
   {
     path: '/Provee',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Proveedor-repo.vue') }
     ]
@@ -100,7 +88,6 @@ const routes = [
   {
     path: '/libro',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Libro-Diario.vue') }
     ]
@@ -108,7 +95,6 @@ const routes = [
   {
     path: '/transaccion',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requireAuth: true },
     children: [
       { path: '', component: () => import('pages/Transacciones-p.vue') }
     ]

@@ -30,7 +30,6 @@
     </q-header>
     <div class="row" style="margin-top: 30px">
       <div
-        class="col-6 col-sm-3"
         v-for="(data, index) in opciones"
         :key="index"
       >
@@ -76,46 +75,22 @@ const router = useRouter();
 
 const opciones = ref([
   {
-    id: 1,
-    url: "book",
-    titulo: "Libro Diario",
-    link: "libro",
-  },
-  {
     id: 2,
     url: "library_books",
     titulo: "Catalogo de Cuentas",
     link: "catalogo",
   },
   {
-    id: 3,
-    url: "local_mall",
-    titulo: "Compras",
-    link: "compras",
-  },
-  {
-    id: 4,
-    url: "price_check",
-    titulo: "Ventas",
-    link: "ventas",
-  },
-  {
-    id: 5,
-    url: "archive",
-    titulo: "Inventario",
-    link: "inventario",
+    id: 7,
+    url: "currency_exchange",
+    titulo: "Transacciones",
+    link: "transaccion",
   },
   {
     id: 6,
     url: "poll",
     titulo: "Reportes",
     link: "reportes",
-  },
-  {
-    id: 7,
-    url: "currency_exchange",
-    titulo: "Transacciones",
-    link: "transaccion",
   },
   // Agrega más objetos según sea necesario
 ]);

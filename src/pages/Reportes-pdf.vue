@@ -12,7 +12,6 @@
         </q-header>
       <div class="row" style="margin-top: 30px;">
         <div
-          class="col-6 col-sm-3"
           v-for="(data, index) in opciones"
           :key="index"
         >
@@ -62,12 +61,6 @@
             link: "EstadoR",
         },
         {
-            id: 2,
-            url: "event_note",
-            titulo: "Estado de capital contable del propietario",
-            link: "EstadoC",
-        },
-        {
             id: 3,
             url: "balance",
             titulo: "Balance General",
@@ -78,18 +71,6 @@
             url: "query_stats",
             titulo: "Estado de flujo de efectivo",
             link: "EstadoFE",
-        },
-        {
-            id: 5,
-            url: "account_circle",
-            titulo: "Clientes",
-            link: "Cliente",
-        },
-        {
-            id: 6,
-            url: "account_circle",
-            titulo: "Proveedores",
-            link: "Provee",
         },
     ]);
     
