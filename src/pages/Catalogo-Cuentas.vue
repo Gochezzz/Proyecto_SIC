@@ -1,96 +1,94 @@
 <template>
     <div>
-      <q-header class="text-white configh">
-        <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
-          <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
-          <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
-          <q-toolbar-title class="titulo" style="font-size: 40px;margin-left: 325px;">
+        <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;background-color: #CEE5EF;">
+            <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
+            <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
+            <q-toolbar-title class="titulo" style="font-size: 40px;margin-left: 325px;">
             Catalogo de Cuentas
-          </q-toolbar-title >
-          <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
+            </q-toolbar-title >
+            <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
         </q-toolbar>
-      </q-header>
-      <div class="Ordenar" style="margin-top: 30px;">
-        <div class="tabla">
-          <q-table
-                :rows="data"
-                :columns="columns"
-                row-key="codigo"
-                :row-class="customRowClass"
-            >
-                <template v-slot:header="props">
-                <q-tr :props="props">
-                    <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="custom-header-class"
-                    >
-                    {{ col.label }}
-                    </q-th>
-                </q-tr>
-                </template>
-                <template v-slot:body="props">
-                <q-tr :props="props" :class="customRowClass(props.row)">
-                    <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                    {{ col.value }}
-                    </q-td>
-                </q-tr>
-                </template>
-            </q-table>
-        </div>
-        <div class="b-agregar">
-            <q-btn 
-                class="botonagregar efect" 
-                label="Agregar Cuenta"
-                style="padding-left: 20px; padding-right: 20px"
-                @click="mostrarDrawer"
-            />
-            <q-drawer class="Drawg" side="right" bordered v-if="MostrarDrawer" show-if-above>
-               <div class="dT">
-                    <q-label style="font-size: 20px;color:white;text-align: center;">Ingresar Cuentas</q-label>
-                    <q-icon class="change-color" name="cancel" style="font-size: 30px; margin-left: 15px;margin-top: 4px;color:red" @click="cerrarDrawer"/>
-               </div>
-               <div class="datosF" style="margin-top: 10px;">
-                    <div class="separar">
-                        <label style="font-size: 16px;color:#0B3668;">Tipo</label>
-                        <q-select
-                            outlined
-                            v-model="datos.tipo"
-                            :options="Tipos"
-                            label="Tipo"
-                            class="col-5 col-md-3 q-mx-sm"
-                            dense
-                            style="color:#0B3668;margin-top: 10px;"
-                        />
-                    </div>
-                    <div class="separar">
-                        <label style="font-size: 16px;color:#0B3668;">Codigo</label>
-                        <q-input
-                            class="codigo"
-                            v-model="datos.codigo"
-                            dense
-                            
-                        />
-                    </div>
-                    <div class="separar">
-                        <label style="font-size: 16px;color:#0B3668;">Nombre</label>
-                        <q-input
-                            class="nombre"
-                            v-model="datos.nombre"
-                            dense
-                        />
-                    </div>
-               </div>
-               <q-btn 
+        <div class="Ordenar" style="margin-top: 30px;">
+            <div class="tabla">
+            <q-table
+                    :rows="data"
+                    :columns="columns"
+                    row-key="codigo"
+                    :row-class="customRowClass"
+                >
+                    <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        class="custom-header-class"
+                        >
+                        {{ col.label }}
+                        </q-th>
+                    </q-tr>
+                    </template>
+                    <template v-slot:body="props">
+                    <q-tr :props="props" :class="customRowClass(props.row)">
+                        <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                        {{ col.value }}
+                        </q-td>
+                    </q-tr>
+                    </template>
+                </q-table>
+            </div>
+            <div class="b-agregar">
+                <q-btn 
                     class="botonagregar efect" 
-                    label="Crear"
+                    label="Agregar Cuenta"
                     style="padding-left: 20px; padding-right: 20px"
-                    @click="Subirdata"
+                    @click="mostrarDrawer"
                 />
-            </q-drawer>
+                <q-drawer class="Drawg" side="right" bordered v-if="MostrarDrawer" show-if-above>
+                <div class="dT">
+                        <q-label style="font-size: 20px;color:white;text-align: center;">Ingresar Cuentas</q-label>
+                        <q-icon class="change-color" name="cancel" style="font-size: 30px; margin-left: 15px;margin-top: 4px;color:red" @click="cerrarDrawer"/>
+                </div>
+                <div class="datosF" style="margin-top: 10px;">
+                        <div class="separar">
+                            <label style="font-size: 16px;color:#0B3668;">Tipo</label>
+                            <q-select
+                                outlined
+                                v-model="datos.tipo"
+                                :options="Tipos"
+                                label="Tipo"
+                                class="col-5 col-md-3 q-mx-sm"
+                                dense
+                                style="color:#0B3668;margin-top: 10px;"
+                            />
+                        </div>
+                        <div class="separar">
+                            <label style="font-size: 16px;color:#0B3668;">Codigo</label>
+                            <q-input
+                                class="codigo"
+                                v-model="datos.codigo"
+                                dense
+                                
+                            />
+                        </div>
+                        <div class="separar">
+                            <label style="font-size: 16px;color:#0B3668;">Nombre</label>
+                            <q-input
+                                class="nombre"
+                                v-model="datos.nombre"
+                                dense
+                            />
+                        </div>
+                </div>
+                <q-btn 
+                        class="botonagregar efect" 
+                        label="Crear"
+                        style="padding-left: 20px; padding-right: 20px"
+                        @click="Subirdata"
+                    />
+                </q-drawer>
+            </div>
         </div>
-      </div>
     </div>
 </template>
   

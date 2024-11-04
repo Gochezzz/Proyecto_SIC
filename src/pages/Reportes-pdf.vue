@@ -1,19 +1,18 @@
 <template>
     <div class="row">
-        <q-header class="text-white configh">
-            <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
-                <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
-                <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
-                <q-toolbar-title class="tituloC" style="font-size: 40px;margin-left: 325px;">
-                    Reporte
-                </q-toolbar-title >
-                <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
-            </q-toolbar>
-        </q-header>
+      <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;background-color: #CEE5EF;">
+        <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
+        <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
+        <q-toolbar-title class="tituloC" style="font-size: 40px;margin-left: 325px;">
+            Reporte
+        </q-toolbar-title >
+        <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
+      </q-toolbar>
       <div class="row" style="margin-top: 30px;">
         <div
           v-for="(data, index) in opciones"
           :key="index"
+          style="max-width: 300px;"
         >
           <div
             class="q-gutter-md q-mb-md text-center"
@@ -31,7 +30,7 @@
               <q-icon
                 :name="data.url"
                 class="q-pa-md imgres"
-                style="height: 30vh; object-fit: cover; font-size: 200px;color: #0B3668"
+                style="height: 30vh; object-fit: cover; font-size: 200px;color: #0B3668;"
               />
               <div class="absolute-bottom text-h6" style="color: #0B3668;">
                   {{ data.titulo }}

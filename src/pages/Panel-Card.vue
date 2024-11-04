@@ -1,33 +1,32 @@
 <template>
   <div class="row">
-    <q-header class="text-white configh" style="margin-bottom: 30px !important;">
-      <q-toolbar
+    <q-toolbar
+      style="
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #CEE5EF;
+      "
+    >
+      <q-toolbar-title class="titulo" style="font-size: 40px">
+        Panel de Control
+      </q-toolbar-title>
+      <q-btn
+        class="botoncerrar efect"
+        label="Cerrar Sesion"
+        style="padding-left: 20px; padding-right: 20px"
+        @click="CerrarSesion"
+      />
+      <q-icon
+        name="account_circle"
         style="
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          font-size: 50px;
+          margin-left: 15px;
+          margin-top: 3px;
+          color: #0b3668;
         "
-      >
-        <q-toolbar-title class="titulo" style="font-size: 40px">
-          Panel de Control
-        </q-toolbar-title>
-        <q-btn
-          class="botoncerrar efect"
-          label="Cerrar Sesion"
-          style="padding-left: 20px; padding-right: 20px"
-          @click="CerrarSesion"
-        />
-        <q-icon
-          name="account_circle"
-          style="
-            font-size: 50px;
-            margin-left: 15px;
-            margin-top: 3px;
-            color: #0b3668;
-          "
-        />
-      </q-toolbar>
-    </q-header>
+      />
+    </q-toolbar>
     <div class="row" style="margin-top: 30px">
       <div
         v-for="(data, index) in opciones"

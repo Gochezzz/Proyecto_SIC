@@ -1,15 +1,13 @@
 <template>
     <div>
-      <q-header class="text-white configh">
-        <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;">
-          <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
-          <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
-          <q-toolbar-title class="tituloFE" style="font-size: 40px;">
-            Estado de Flujo de Efectivo
-          </q-toolbar-title >
-          <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
-        </q-toolbar>
-      </q-header>
+      <q-toolbar style="display: inline-flex;align-items: center;justify-content: center;background-color: #CEE5EF;">
+        <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
+        <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
+        <q-toolbar-title class="tituloFE" style="font-size: 40px;">
+          Estado de Flujo de Efectivo
+        </q-toolbar-title >
+        <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
+      </q-toolbar>
       <div class="Ordenar" style="margin-top: 30px;">
         <div class="tablaC">
           <q-table
