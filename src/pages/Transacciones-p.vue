@@ -12,13 +12,13 @@
             <div class="fLibro">
                 <div class="cuadroDE">
                     <q-card flat bordered style="border-radius: 10px;">
-                        <q-card-section style="display: flex;">
+                        <q-card-section style="display: flex;justify-content: center;">
                             <div style="min-width: 140px">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Tipo Cuenta</label>
                                 <q-select
-                                    v-model="datos.codigoc"
-                                    :options="mostrarSelecCodigo"
-                                    label="código"
+                                    v-model="datos.tipo"
+                                    :options="Tipos"
+                                    label="Tipo"
                                     class="col-5 col-md-3 q-mx-sm"
                                     dense
                                     style="color:#0B3668;margin-top: 10px;margin-left: 12px;"
@@ -35,23 +35,36 @@
                                     style="color:#0B3668;margin-top: 10px;margin-left: 12px;"
                                 />
                             </div>
-                        </q-card-section>
-                        <q-card-section style="display: flex;">
                             <div style="margin-left: 12px;">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Monto</label>
                                 <q-input
                                 v-model="datos.monto"
                                 autogrow
                                 dense
-                            />
-                            </div>
-                            <div style="margin-left: 42px;">
-                                <label style="font-size: 16px;color:#0B3668;margin-top: 8px;">Haber</label>
-                                <q-input
-                                    v-model="datos.haber"
-                                    autogrow
-                                    dense
+                                style="margin-top: 10px;"
                                 />
+                            </div>
+                            <div style="margin-left: 12px;">
+                                <label style="font-size: 16px; color: #0B3668; margin-top: 8px;">Fecha</label>
+                                <q-input
+                                    v-model="date"
+                                    filled
+                                    dense
+                                    mask="date"
+                                    :rules="['date']"
+                                    style="max-width: 200px;margin-top: 10px !important;margin-left: 0px !important;padding-left: 0px !important;padding-top: 0px !important;"
+                                >
+                                    <template v-slot:append>
+                                    <q-icon name="event" class="cursor-pointer">
+                                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-date v-model="date" class="q-pa-md" />
+                                        <div class="row items-center justify-end q-mt-sm">
+                                            <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                                        </div>
+                                        </q-popup-proxy>
+                                    </q-icon>
+                                    </template>
+                                </q-input>
                             </div>
                         </q-card-section>
                         <q-card-section style="text-align: center;">
@@ -76,6 +89,7 @@
     import { collection, addDoc, getDocs} from "firebase/firestore";
     import swal from "sweetalert";
 
+    const date = ref('2024/11/04')
     const router = useRouter();
     const regresar = () => {
         router.push("/panel");
@@ -83,23 +97,20 @@
     
     //Jalando DATA para los select cuenta y codigo cta
     const datos = ref({
-        codigoc: "",
+        tipo: "",
         nombrec: "",
         monto: ""
     });
+    const Tipos =  ['Activo', 'Pasivo', 'Patrimonio', 'Gasto', 'Ingreso', 'Cuenta de Cierre']
     const mostrarCuenta = [];
     const mostrarSelecCuenta = ref();
-    const mostrarCodigo = [];
-    const mostrarSelecCodigo = ref();
     const cargarDatos = async function () {
         // cargar las marcas
         const querySnapshot2 = await getDocs(collection(db, "Catalogo"));
         querySnapshot2.forEach((doc) => {
             mostrarCuenta.push(doc.data().nombre);
-            mostrarCodigo.push(doc.data().codigo);
         });
         mostrarSelecCuenta.value = mostrarCuenta;
-        mostrarSelecCodigo.value = mostrarCodigo;
     };
     onMounted(() => {
         cargarDatos();
