@@ -4,7 +4,7 @@
             <q-icon class="change-color" name="arrow_circle_left" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668" @click="regresar"/>
             <q-label style="font-size: 40px;color: #0B3668 ;text-align: left;margin-left: 5px;">Regresar</q-label>
             <q-toolbar-title class="tituloT" style="font-size: 40px;margin-left: 325px;">
-            Transacciones
+            Ingresar Datos
             </q-toolbar-title >
             <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
         </q-toolbar>

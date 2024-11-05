@@ -74,19 +74,25 @@ const router = useRouter();
 
 const opciones = ref([
   {
-    id: 2,
+    id: 1,
     url: "library_books",
     titulo: "Catalogo de Cuentas",
     link: "catalogo",
   },
   {
-    id: 7,
-    url: "currency_exchange",
-    titulo: "Transacciones",
+    id: 2,
+    url: "description",
+    titulo: "Ingreso de Datos",
     link: "transaccion",
   },
   {
-    id: 6,
+    id: 3,
+    url: "edit_note",
+    titulo: "Editar Datos",
+    link: "editar",
+  },
+  {
+    id: 4,
     url: "poll",
     titulo: "Reportes",
     link: "reportes",

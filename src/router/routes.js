@@ -17,27 +17,6 @@ const routes = [
     ],
   },
   {
-    path: "/compras",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [
-      { path: "", component: () => import("pages/Compras-pagina.vue") },
-    ],
-  },
-  {
-    path: "/ventas",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [
-      { path: "", component: () => import("pages/Ventas-pagina.vue") },
-    ],
-  },
-  {
-    path: "/inventario",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [
-      { path: "", component: () => import("pages/Inventario-pagina.vue") },
-    ],
-  },
-  {
     path: "/reportes",
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/Reportes-pdf.vue") }],
@@ -51,13 +30,6 @@ const routes = [
     ]
   },
   {
-    path: '/EstadoC',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Estado-C-repo.vue') }
-    ]
-  },
-  {
     path: '/Balance',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -65,38 +37,17 @@ const routes = [
     ]
   },
   {
-    path: '/EstadoFE',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Estado-F-E-repo.vue') }
-    ]
-  },
-  {
-    path: '/Cliente',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Cliente-repo.vue') }
-    ]
-  },
-  {
-    path: '/Provee',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Proveedor-repo.vue') }
-    ]
-  },
-  {
-    path: '/libro',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Libro-Diario.vue') }
-    ]
-  },
-  {
     path: '/transaccion',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Transacciones-p.vue') }
+    ]
+  },
+  {
+    path: '/editar',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Editar-data.vue') }
     ]
   },
 
