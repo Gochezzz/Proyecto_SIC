@@ -68,8 +68,6 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref} from "vue";
-import { signOut } from "firebase/auth";
-import { auth } from "src/boot/firebase";
 const router = useRouter();
 
 const opciones = ref([
@@ -105,21 +103,8 @@ const funcionParaRedirigir = (link) => {
 };
 
 const CerrarSesion = () => {
-  signOut(auth)
-    .then(() => {
-      // Sign-out successful.
-      auth.currentUser = null;
-      if (auth.currentUser === null) {
-        router.push("/");
-      } else {
-        alert("No se pudo cerrar sesion");
-      }
-    })
-    .catch((error) => {
-      // An error happened.
-      console.log(error);
-      usuario.value = null;
-    });
-  //router.push("/");
+
+  router.push("/");
+
 };
 </script>

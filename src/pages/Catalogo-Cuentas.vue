@@ -93,11 +93,9 @@
 </template>
   
 <script setup>
-    import {db} from "boot/firebase";
     import { useRouter } from "vue-router";
-    import { ref} from 'vue';
-    import { collection, addDoc} from "firebase/firestore";
-    import { useCollection } from "vuefire";
+    import { ref, onMounted} from 'vue';
+    import { catalogodb } from "src/boot/Pouchdb";
     import swal from "sweetalert";
 
     const cerrarDrawer = () => {
@@ -108,7 +106,22 @@
 
     const MostrarDrawer = ref(false);
 
-    const data = useCollection(collection(db,"Catalogo"));
+    const data = ref([]); // Hacemos que 'data' sea reactivo
+
+    // Función para cargar los datos de PouchDB
+    async function cargarDatos() {
+        try {
+            const result = await catalogodb.allDocs({ include_docs: true });
+            data.value = result.rows.map(row => row.doc); // Asigna los documentos a 'data'
+        } catch (error) {
+            console.error("Error loading documents from PouchDB:", error);
+        }
+    }
+
+    // Llama a cargarDatos cuando el componente se monte
+    onMounted(() => {
+        cargarDatos();
+    });
     const datos = ref({
         tipo: "",
         codigo: "",
@@ -122,6 +135,7 @@
     
     const columns = [
         { name: 'codigo', align: 'left', label: 'Código', field: 'codigo', sortable: true },
+        { name: 'tipo', align: 'left', label: 'Tipo de Cuenta', field: 'tipo', sortable: true },
         { name: 'nombre', align: 'left', label: 'Nombre de Cuenta', field: 'nombre', sortable: true },
     ];
     
@@ -143,32 +157,43 @@
         try {
             const valordatos = Object.values(datos.value);
             if (valordatos.some((valor) => !valor)) {
-            swal({
-                title: "Esperaa!",
-                text: "Debes llenar todos los campos",
-                icon: "warning",
-                buttons: false,
-                timer: 3500,
-            });
-            return; // Detener la ejecución si al menos un campo está vacío
+                swal({
+                    title: "Esperaa!",
+                    text: "Debes llenar todos los campos",
+                    icon: "warning",
+                    buttons: false,
+                    timer: 3500,
+                });
+                return; // Detener la ejecución si al menos un campo está vacío
             }
-            const docRef = await addDoc(collection(db, "Catalogo"), datos.value);
-            console.log("Document written with ID: ", docRef.id);
+            // Guardar en PouchDB
+            const pouchDoc = {
+                _id: docRef.id, // Usamos el mismo ID generado en Firebase para mantener la coherencia
+                ...datos.value
+            };
+            await catalogodb.put(pouchDoc);
+
             swal({
-            title: "Muy Bien",
-            text: "La cuenta se creo correctamente",
-            icon: "success",
-            buttons: false,
-            timer: 3000,
+                title: "Muy Bien",
+                text: "La cuenta se creo correctamente",
+                icon: "success",
+                buttons: false,
+                timer: 3000,
             });
+
+            // Reiniciar los valores y cerrar el drawer
             MostrarDrawer.value = false;
             datos.value.tipo = "";
             datos.value.codigo = "";
             datos.value.nombre = "";
+
+            // Recargar los datos de PouchDB para reflejar la nueva cuenta en la tabla
+            await cargarDatos();
         } catch (e) {
             console.error("Error adding document: ", e);
         }
     }
+
 </script>
   
   <style scoped>

@@ -29,54 +29,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { auth, provider } from "src/boot/firebase";
-import { signInWithRedirect, onAuthStateChanged } from "firebase/auth";
-
-const usuario = ref([]);
-const photo = ref("");
-const name = ref("");
 const router = useRouter();
-
-const Login = ref({
-  user: "",
-  password: "",
-});
-
 const IniciarSesion = () => {
-  signInWithRedirect(auth, provider);
+  router.push("/panel");
 };
 
-function redirigirPanel() {
-  if (auth.currentUser) {
-    // Redirige a "/panel" cuando la autenticación se completa
-    router.push("/panel");
-  } else {
-    console.log("El usuario no está autenticado");
-  }
-}
-
-onMounted(() => {
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    if (user && user.photoURL) {
-      usuario.value = user;
-      photo.value = user.photoURL;
-      name.value = user.displayName;
-      console.log("URL de la foto del usuario:", photo.value);
-      console.log("Nombre del usuario:", name.value);
-      // Redirige después de 5 segundos
-      setTimeout(() => {
-        redirigirPanel();
-      }, 4500);
-    } else {
-      console.log("El usuario no está autenticado");
-    }
-  });
-
-  // Importante: Detener la suscripción al desmontar el componente
-  watch(() => router.currentRoute, () => {
-    unsubscribe();
-  });
-});
 </script>
