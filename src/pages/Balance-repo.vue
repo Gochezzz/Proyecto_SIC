@@ -64,7 +64,8 @@
         Estados Consolidados de Situacion Financiera
       </h3>
       <h6 style="margin-left: 5%; margin-top: 2%">
-        Al 31 de diciembre de 2019<br />En miles de pesos mexicanos
+        Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos
+        mexicanos
       </h6>
 
       <!-- Tablas para Activos, Pasivos y Patrimonio -->
@@ -128,8 +129,9 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { jsPDF } from "jspdf";
+import { cuentasdb, catalogodb } from "../boot/Pouchdb";
 
 const router = useRouter();
 
@@ -138,95 +140,177 @@ const regresar = () => {
 };
 
 // Variables reactivas
-const selectedYear = ref(null);
+const selectedYear = ref(2024);
 const years = Array.from(
   { length: 10 },
   (_, i) => new Date().getFullYear() - i
 );
 
-const activos = ref([
-  { nombre: "Efectivo y equivalentes de efectivo", valor: 9730213 },
-  { nombre: "Efectivo restringido", valor: 11307 },
-  { nombre: "Clientes y otras cuentas por cobrar, neto", valor: 7903117 },
-  { nombre: "Inventarios", valor: 16244535 },
-  { nombre: "Impuestos a la utilidad por recuperar", valor: null },
-  { nombre: "Instrumentos financieros derivados", valor: null },
-  { nombre: "Activos mantenidos para la venta", valor: 485997 },
-]);
-
-const pasivos = ref([
-  { nombre: "Cuentas por Pagar", valor: 75000 },
-  { nombre: "Préstamos a Largo Plazo", valor: 100000 },
-]);
-
-const patrimonios = ref([
-  { nombre: "Capital Social", valor: 275000 },
-  { nombre: "Utilidades Retenidas", valor: 204000 },
-]);
+const activos = ref([]);
+const pasivos = ref([]);
+const patrimonios = ref([]);
 
 // Columnas de la tabla
 const columns = [
-  { name: "nombre", label: "Nombre", align: "left", field: "nombre" },
+  { name: "nombre", label: "Cuentas", align: "left", field: "nombre" },
   {
     name: "valor",
-    label: "Valor",
+    label: selectedYear.value,
     align: "right",
-    field: (row) => formatCurrency(row.valor),
+    field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
   },
 ];
+//cargar datos
+const cargarDatosDesdeDB = async () => {
+  try {
+    const result = await cuentasdb.allDocs({ include_docs: true });
+
+    // Crear objetos para almacenar los totales de cada cuenta
+    const activosData = {};
+    const pasivosData = {};
+    const patrimoniosData = {};
+
+    result.rows.forEach(({ doc }) => {
+      const tipo = doc.tipo; // Tipo de cuenta: Activo, Pasivo, Patrimonio
+      const nombre = doc.nombrec;
+      const monto = parseFloat(doc.monto); // Asegúrate de que el monto sea un número
+      const fecha = doc.fecha;
+
+      // Extraer el año de la fecha del documento
+      const anio = new Date(fecha).getFullYear();
+
+      // Filtrar por el año seleccionado
+      if (anio === selectedYear.value) {
+        // Agrupar y sumar los valores para Activos
+        if (tipo === "Activo") {
+          if (!activosData[nombre]) {
+            activosData[nombre] = 0;
+          }
+          activosData[nombre] += monto; // Sumar el valor numérico
+        }
+        // Agrupar y sumar los valores para Pasivos
+        else if (tipo === "Pasivo") {
+          if (!pasivosData[nombre]) {
+            pasivosData[nombre] = 0;
+          }
+          pasivosData[nombre] += monto; // Sumar el valor numérico
+        }
+        // Agrupar y sumar los valores para Patrimonio
+        else if (tipo === "Patrimonio") {
+          if (!patrimoniosData[nombre]) {
+            patrimoniosData[nombre] = 0;
+          }
+          patrimoniosData[nombre] += monto; // Sumar el valor numérico
+        }
+      }
+    });
+
+    // Convertir los objetos en arrays para que sean compatibles con la tabla
+    activos.value = [
+      {
+        nombre: "Total Activos",
+        valor: Object.values(activosData).reduce((a, b) => a + b, 0),
+      },
+      ...Object.keys(activosData).map((nombre) => ({
+        nombre,
+        valor: activosData[nombre],
+      })),
+    ];
+
+    pasivos.value = [
+      {
+        nombre: "Total Pasivos",
+        valor: Object.values(pasivosData).reduce((a, b) => a + b, 0),
+      },
+      ...Object.keys(pasivosData).map((nombre) => ({
+        nombre,
+        valor: pasivosData[nombre],
+      })),
+    ];
+
+    patrimonios.value = [
+      {
+        nombre: "Total Patrimonios",
+        valor: Object.values(patrimoniosData).reduce((a, b) => a + b, 0),
+      },
+      ...Object.keys(patrimoniosData).map((nombre) => ({
+        nombre,
+        valor: patrimoniosData[nombre],
+      })),
+    ];
+  } catch (error) {
+    console.error("Error al cargar datos desde la base de datos:", error);
+  }
+};
 
 // Método para generar PDF
 const generatePDF = () => {
   const doc = new jsPDF();
-
-  // Título del PDF
   doc.text(`Balance General - Año ${selectedYear.value}`, 10, 10);
 
+  // Variables para controlar la posición vertical en el PDF
+  let yPosition = 20;
+
   // Activos
-  doc.text("Activos:", 10, 20);
-  activos.value.forEach((activo, index) => {
+  doc.text("Activos:", 10, yPosition);
+  yPosition += 10;
+  activos.value.forEach((activo) => {
     doc.text(
       `${activo.nombre}: ${formatCurrency(activo.valor)}`,
       10,
-      30 + index * 10
+      yPosition
     );
+    yPosition += 10;
   });
 
+  // Espacio entre secciones
+  yPosition += 10;
+
   // Pasivos
-  doc.text("Pasivos:", 10, 30 + activos.value.length * 10);
-  pasivos.value.forEach((pasivo, index) => {
+  doc.text("Pasivos:", 10, yPosition);
+  yPosition += 10;
+  pasivos.value.forEach((pasivo) => {
     doc.text(
       `${pasivo.nombre}: ${formatCurrency(pasivo.valor)}`,
       10,
-      40 + (activos.value.length + index) * 10
+      yPosition
     );
+    yPosition += 10;
   });
 
+  // Espacio entre secciones
+  yPosition += 10;
+
   // Patrimonio
-  doc.text(
-    "Patrimonio:",
-    10,
-    40 + (activos.value.length + pasivos.value.length) * 10
-  );
-  patrimonios.value.forEach((patrimonio, index) => {
+  doc.text("Patrimonio:", 10, yPosition);
+  yPosition += 10;
+  patrimonios.value.forEach((patrimonio) => {
     doc.text(
       `${patrimonio.nombre}: ${formatCurrency(patrimonio.valor)}`,
       10,
-      50 + (activos.value.length + pasivos.value.length + index) * 10
+      yPosition
     );
+    yPosition += 10;
   });
 
   // Guardar PDF
   doc.save(`Balance_General_${selectedYear.value}.pdf`);
 };
 
-// Filtro de formato de moneda
+// Formato de moneda
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("es-ES", {
     style: "currency",
     currency: "USD",
   }).format(value);
 };
+// Cargar datos al montar el componente
+onMounted(() => {
+  cargarDatosDesdeDB();
+});
+watch(selectedYear, () => {
+  cargarDatosDesdeDB();
+});
 </script>
 
 <style scoped>
