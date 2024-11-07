@@ -39,9 +39,17 @@
             </div>
             <div class="b-agregar">
                 <q-btn 
+                    :disable="botonDeshabilitado"
+                    :class="{ 'boton-deshabilitado': botonDeshabilitado }"
+                    class="botonagregar efect" 
+                    label="Cargar Catalogo"
+                    style="padding-left: 20px; padding-right: 20px;"
+                    @click="cargarcatalogo"
+                />
+                <q-btn 
                     class="botonagregar efect" 
                     label="Agregar Cuenta"
-                    style="padding-left: 20px; padding-right: 20px"
+                    style="padding-left: 20px; padding-right: 20px;"
                     @click="mostrarDrawer"
                 />
                 <q-drawer class="Drawg" side="right" bordered v-if="MostrarDrawer" show-if-above>
@@ -97,10 +105,39 @@
     import { ref, onMounted} from 'vue';
     import { catalogodb } from "src/boot/Pouchdb";
     import swal from "sweetalert";
+    import catalogoData from "src/assets/catalogo.json";
+    const botonDeshabilitado = ref(false);
 
     const cerrarDrawer = () => {
         MostrarDrawer.value = false;
     };
+    const cargarcatalogo = async () => {
+        try {
+            await cargarCatalogoInicial();
+
+        } catch (error) {
+            console.error("Error al cargar el catálogo inicial:", error);
+        }
+    };
+    async function cargarCatalogoInicial() {
+        try {
+            // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
+            for (const cuenta of catalogoData) {
+            await catalogodb.put({
+                _id: new Date().toISOString(),
+                tipo: cuenta.tipo,
+                codigo: cuenta.codigo,
+                nombre: cuenta.nombre,
+            });
+            }
+            botonDeshabilitado.value = true;
+            localStorage.setItem("botonDeshabilitado", "true");
+            await cargarDatos();
+            console.log("Catálogo inicial cargado en catalogodb.");
+        } catch (error) {
+            console.error("Error al cargar el catálogo en PouchDB:", error);
+        }
+    }
 
     const router = useRouter();
 
@@ -121,6 +158,7 @@
     // Llama a cargarDatos cuando el componente se monte
     onMounted(() => {
         cargarDatos();
+        botonDeshabilitado.value = localStorage.getItem("botonDeshabilitado") === "true";
     });
     const datos = ref({
         tipo: "",
@@ -168,7 +206,7 @@
             }
             // Guardar en PouchDB
             const pouchDoc = {
-                _id: docRef.id, // Usamos el mismo ID generado en Firebase para mantener la coherencia
+                _id: new Date().toISOString(), // Usamos el mismo ID generado en Firebase para mantener la coherencia
                 ...datos.value
             };
             await catalogodb.put(pouchDoc);
@@ -196,15 +234,19 @@
 
 </script>
   
-  <style scoped>
-  .custom-header-class {
+<style scoped>
+    .custom-header-class {
     background-color: #0B3668; /* Cambia el color de fondo según tus necesidades */
     color: #ffffff; /* Cambia el color del texto según tus necesidades */
-  }
-  
-  .custom-row-class {
+    }
+
+    .custom-row-class {
     background-color: #CEE5EF; /* Cambia el color de fondo según tus necesidades */
     color: #0B3668; /* Cambia el color del texto según tus necesidades */
-  }
-  </style>
+    }
+    .boton-deshabilitado {
+    background-color: grey !important;
+    color: white !important;
+    }
+</style>
   

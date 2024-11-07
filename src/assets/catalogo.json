@@ -1,0 +1,5 @@
+[
+    { "tipo": "Activo", "codigo": "100", "nombre": "Caja" },
+    { "tipo": "Pasivo", "codigo": "200", "nombre": "Proveedores" },
+    { "tipo": "Patrimonio", "codigo": "300", "nombre": "Capital" }
+]

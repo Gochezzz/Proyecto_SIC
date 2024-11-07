@@ -30,9 +30,38 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-const router = useRouter();
-const IniciarSesion = () => {
-  router.push("/panel");
-};
+import { ref } from "vue";
+import { catalogodb, cuentasdb } from "src/boot/Pouchdb";
 
+const router = useRouter();
+
+const IniciarSesion = async () => {
+  try {
+    await limpiarBasesDeDatos();
+    router.push("/panel");
+  } catch (error) {
+    console.error("Error al cargar el catálogo inicial:", error);
+  }
+};
+async function limpiarBasesDeDatos() {
+  try {
+    // Limpia catalogodb
+    const catalogoDocs = await catalogodb.allDocs();
+    for (const doc of catalogoDocs.rows) {
+      await catalogodb.remove(doc.id, doc.value.rev);
+    }
+    console.log("Catalogodb limpiada correctamente.");
+
+    // Limpia cuentasdb
+    const cuentasDocs = await cuentasdb.allDocs();
+    for (const doc of cuentasDocs.rows) {
+      await cuentasdb.remove(doc.id, doc.value.rev);
+    }
+    console.log("Cuentasdb limpiada correctamente.");
+    
+    alert("Bases de datos limpiadas correctamente.");
+  } catch (error) {
+    console.error("Error al limpiar las bases de datos:", error);
+  }
+}
 </script>
