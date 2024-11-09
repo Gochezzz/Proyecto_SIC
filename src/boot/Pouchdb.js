@@ -1,4 +1,6 @@
 import PouchDB from 'pouchdb';
-const cuentasdb = new PouchDB('cuentasdb');
-const catalogodb = new PouchDB('catalogodb');
-export { cuentasdb, catalogodb };//Exportamos las bases
+const cuentasER = new PouchDB('cuentasER');
+const cuentasBG = new PouchDB('cuentasBG');
+const catalogoER = new PouchDB('catalogoER');
+const catalogoBG = new PouchDB('catalogoBG');
+export { cuentasER, catalogoER, cuentasBG, catalogoBG };//Exportamos las bases

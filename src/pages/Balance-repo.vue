@@ -150,7 +150,7 @@
 import { useRouter } from "vue-router";
 import { ref, onMounted, watch } from "vue";
 import { jsPDF } from "jspdf";
-import { cuentasdb, catalogodb } from "../boot/Pouchdb";
+import { cuentasBG, catalogoBG } from "../boot/Pouchdb";
 
 const router = useRouter();
 
@@ -242,7 +242,7 @@ const columnsP = [
 // Método para cargar los datos desde la base de datos
 const cargarDatosDesdeDB = async () => {
   try {
-    const cuentas = await cuentasdb.allDocs({ include_docs: true });
+    const cuentas = await cuentasBG.allDocs({ include_docs: true });
     console.log(cuentas);
 
     // Inicializar objetos intermedios para acumular montos

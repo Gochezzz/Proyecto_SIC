@@ -100,10 +100,16 @@ const opciones = ref([
     link: "EstadoR",
   },
   {
-    id: 3,
+    id: 2,
     url: "balance",
     titulo: "Balance General",
     link: "Balance",
+  },
+  {
+    id: 3,
+    url: "table_chart",
+    titulo: "Analisis Horizontal",
+    link: "Ahorizontal",
   },
 ]);
 

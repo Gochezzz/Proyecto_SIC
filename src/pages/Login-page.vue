@@ -31,7 +31,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { catalogodb, cuentasdb } from "src/boot/Pouchdb";
+import { catalogoBG, cuentasER, catalogoER } from "src/boot/Pouchdb";
 
 const router = useRouter();
 
@@ -46,16 +46,22 @@ const IniciarSesion = async () => {
 async function limpiarBasesDeDatos() {
   try {
     // Limpia catalogodb
-    const catalogoDocs = await catalogodb.allDocs();
+    const catalogoDocs = await catalogoBG.allDocs();
     for (const doc of catalogoDocs.rows) {
-      await catalogodb.remove(doc.id, doc.value.rev);
+      await catalogoBG.remove(doc.id, doc.value.rev);
+    }
+    console.log("Catalogodb limpiada correctamente.");
+
+    const catalogoDocs2 = await catalogoER.allDocs();
+    for (const doc of catalogoDocs2.rows) {
+      await catalogoER.remove(doc.id, doc.value.rev);
     }
     console.log("Catalogodb limpiada correctamente.");
 
     // Limpia cuentasdb
-    const cuentasDocs = await cuentasdb.allDocs();
+    const cuentasDocs = await cuentasER.allDocs();
     for (const doc of cuentasDocs.rows) {
-      await cuentasdb.remove(doc.id, doc.value.rev);
+      await cuentasER.remove(doc.id, doc.value.rev);
     }
     console.log("Cuentasdb limpiada correctamente.");
     

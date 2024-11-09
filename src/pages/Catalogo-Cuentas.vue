@@ -8,11 +8,22 @@
             </q-toolbar-title >
             <q-icon name="account_circle" style="font-size: 50px; margin-left: 15px;margin-top: 6px;color:#0B3668"/>
         </q-toolbar>
-        <div class="Ordenar" style="margin-top: 30px;">
+        <q-select
+            outlined
+            v-model="Estados.name"
+            :options="estados"
+            label="Estados Financieros"
+            class="col-5 col-md-3 q-mx-sm"
+            dense
+            clearable
+            style="color:#0B3668;margin-top: 40px;margin-left: 40px;width: 240px;"
+        />
+        <div class="Ordenar">
             <div class="tabla">
             <q-table
+                    :title="activetitulo"
                     :rows="data"
-                    :columns="columns"
+                    :columns="activeColumns"
                     row-key="codigo"
                     :row-class="customRowClass"
                 >
@@ -35,22 +46,33 @@
                         </q-td>
                     </q-tr>
                     </template>
-                </q-table>
+            </q-table>
             </div>
             <div class="b-agregar">
                 <q-btn 
-                    :disable="botonDeshabilitado"
-                    :class="{ 'boton-deshabilitado': botonDeshabilitado }"
+                    :disable="botonDeshabilitadoER && Estados.name === 'Estado de Resultados'"
+                    :class="{ 'boton-deshabilitado': botonDeshabilitadoER && Estados.name === 'Estado de Resultados' }"
                     class="botonagregar efect" 
                     label="Cargar Catalogo"
+                    v-if="Estados.name === 'Estado de Resultados'"
                     style="padding-left: 20px; padding-right: 20px;"
-                    @click="cargarcatalogo"
+                    @click="cargarinfoER"
+                />
+                <q-btn 
+                    :disable="botonDeshabilitadoBG && Estados.name === 'Balance General'"
+                    :class="{ 'boton-deshabilitado': botonDeshabilitadoBG && Estados.name === 'Balance General' }"
+                    class="botonagregar efect" 
+                    label="Cargar Catalogo"
+                    v-if="Estados.name === 'Balance General'"
+                    style="padding-left: 20px; padding-right: 20px;"
+                    @click="cargarinfoBG"
                 />
                 <q-btn 
                     class="botonagregar efect" 
                     label="Agregar Cuenta"
                     style="padding-left: 20px; padding-right: 20px;"
                     @click="mostrarDrawer"
+                    v-if="Estados.name === 'Estado de Resultados'||Estados.name === 'Balance General'"
                 />
                 <q-drawer class="Drawg" side="right" bordered v-if="MostrarDrawer" show-if-above>
                 <div class="dT">
@@ -63,20 +85,23 @@
                             <q-select
                                 outlined
                                 v-model="datos.tipo"
-                                :options="Tipos"
+                                :options="activeTipos"
                                 label="Tipo"
                                 class="col-5 col-md-3 q-mx-sm"
                                 dense
                                 style="color:#0B3668;margin-top: 10px;"
                             />
                         </div>
-                        <div class="separar">
-                            <label style="font-size: 16px;color:#0B3668;">Codigo</label>
-                            <q-input
-                                class="codigo"
-                                v-model="datos.codigo"
+                        <div class="separar" v-if="Estados.name === 'Balance General'">
+                            <label style="font-size: 16px;color:#0B3668;">SubTipo</label>
+                            <q-select
+                                outlined
+                                v-model="datos.subtipo"
+                                :options="Subtipos"
+                                label="SubTipo"
+                                class="col-5 col-md-3 q-mx-sm"
                                 dense
-                                
+                                style="color:#0B3668;margin-top: 10px;"
                             />
                         </div>
                         <div class="separar">
@@ -102,38 +127,55 @@
   
 <script setup>
     import { useRouter } from "vue-router";
-    import { ref, onMounted} from 'vue';
-    import { catalogodb } from "src/boot/Pouchdb";
+    import { ref, computed, onMounted, watch} from 'vue';
+    import { catalogoER, catalogoBG } from "src/boot/Pouchdb";
     import swal from "sweetalert";
-    import catalogoData from "src/assets/catalogo.json";
-    const botonDeshabilitado = ref(false);
-
+    import catalogoBGJ from "src/assets/catalogoBG.json"
+    import catalogoERJ from "src/assets/catalogoER.json"
+    const botonDeshabilitadoER = ref(localStorage.getItem("botonDeshabilitadoER") === "true");
+    const botonDeshabilitadoBG = ref(localStorage.getItem("botonDeshabilitadoBG") === "true");
+    //cambiar
+    const Estados = ref({name: ""});
+    const estados =  ['Estado de Resultados', 'Balance General']
     const cerrarDrawer = () => {
         MostrarDrawer.value = false;
+        datos.value.tipo = "";
+        datos.value.subtipo = "";
+        datos.value.nombre = "";
     };
-    const cargarcatalogo = async () => {
-        try {
-            await cargarCatalogoInicial();
-
-        } catch (error) {
-            console.error("Error al cargar el catálogo inicial:", error);
-        }
-    };
-    async function cargarCatalogoInicial() {
+    async function cargarinfoBG() {
         try {
             // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
-            for (const cuenta of catalogoData) {
-            await catalogodb.put({
+            for (const cuenta of catalogoBGJ) {
+            await catalogoBG.put({
                 _id: new Date().toISOString(),
                 tipo: cuenta.tipo,
-                codigo: cuenta.codigo,
+                subtipo: cuenta.subtipo,
                 nombre: cuenta.nombre,
             });
             }
-            botonDeshabilitado.value = true;
-            localStorage.setItem("botonDeshabilitado", "true");
+            botonDeshabilitadoBG.value = true;
+            localStorage.setItem("botonDeshabilitadoBG", "true");
             await cargarDatos();
-            console.log("Catálogo inicial cargado en catalogodb.");
+            console.log("Catálogo BG cargado en PouchDB.");
+        } catch (error) {
+            console.error("Error al cargar el catálogo en PouchDB:", error);
+        }
+    }
+    async function cargarinfoER() {
+        try {
+            // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
+            for (const cuenta of catalogoERJ) {
+            await catalogoER.put({
+                _id: new Date().toISOString(),
+                tipo: cuenta.tipo,
+                nombre: cuenta.nombre,
+            });
+            }
+            botonDeshabilitadoER.value = true;
+            localStorage.setItem("botonDeshabilitadoER", "true");
+            await cargarDatos();
+            console.log("Catálogo ER cargado en PouchDB.");
         } catch (error) {
             console.error("Error al cargar el catálogo en PouchDB:", error);
         }
@@ -146,36 +188,64 @@
     const data = ref([]); // Hacemos que 'data' sea reactivo
 
     // Función para cargar los datos de PouchDB
+    // Función para cargar los datos de PouchDB según el estado seleccionado
     async function cargarDatos() {
         try {
-            const result = await catalogodb.allDocs({ include_docs: true });
-            data.value = result.rows.map(row => row.doc); // Asigna los documentos a 'data'
+            if (Estados.value.name === 'Estado de Resultados') {
+                const result = await catalogoER.allDocs({ include_docs: true });
+                data.value = result.rows.map(row => row.doc);
+            } else if (Estados.value.name === 'Balance General') {
+                const result = await catalogoBG.allDocs({ include_docs: true });
+                data.value = result.rows.map(row => row.doc);
+            }
+            console.log("Datos cargados:", data.value);
         } catch (error) {
-            console.error("Error loading documents from PouchDB:", error);
+            console.error("Error al cargar documentos desde PouchDB:", error);
         }
     }
+        // Watcher para cargar datos reactivamente cuando cambia `Estados.name`
+    watch(() => Estados.value.name, () => {
+        cargarDatos();
+    });
 
     // Llama a cargarDatos cuando el componente se monte
     onMounted(() => {
         cargarDatos();
-        botonDeshabilitado.value = localStorage.getItem("botonDeshabilitado") === "true";
+        botonDeshabilitadoER.value = localStorage.getItem("botonDeshabilitadoER") === "true";
+        botonDeshabilitadoBG.value = localStorage.getItem("botonDeshabilitadoBG") === "true";
     });
     const datos = ref({
         tipo: "",
-        codigo: "",
+        subtipo: "",
         nombre: "",
     });
-    const Tipos =  ['Activo', 'Pasivo', 'Patrimonio', 'Gasto', 'Ingreso', 'Cuenta de Cierre']
-    
+    const Tipos =  ['Activo', 'Pasivo', 'Capital']
+    const Subtipos =  ['Corriente', 'No Corriente', 'Capital Contable']
+    const TiposER =  ['Ingreso', 'Gasto']
+    const activeTipos = computed(() => {
+    return Estados.value.name === 'Estado de Resultados' ? TiposER : Tipos;
+    });
     const regresar = () => {
         router.push("/panel");
     };
     
-    const columns = [
-        { name: 'codigo', align: 'left', label: 'Código', field: 'codigo', sortable: true },
-        { name: 'tipo', align: 'left', label: 'Tipo de Cuenta', field: 'tipo', sortable: true },
-        { name: 'nombre', align: 'left', label: 'Nombre de Cuenta', field: 'nombre', sortable: true },
+    const columnsER = [
+        { name: 'tipo', align: 'left', label: 'Tipo', field: 'tipo', sortable: true },
+        { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
     ];
+    const columns = [
+        { name: 'tipo', align: 'left', label: 'Tipo', field: 'tipo', sortable: true },
+        { name: 'subtipo', align: 'left', label: 'SubTipo', field: 'subtipo', sortable: true },
+        { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
+    ];
+    // Computed property for dynamically setting table columns
+    const activeColumns = computed(() => {
+    return Estados.value.name === 'Estado de Resultados' ? columnsER :  Estados.value.name === 'Balance General' ? columns: [];
+    });
+     // Computed property for dynamically setting table columns
+     const activetitulo = computed(() => {
+    return Estados.value.name === 'Estado de Resultados' ? "Estado de Resultados" : Estados.value.name === 'Balance General' ? "Balance General":'';
+    });
     
     const customRowClass = (row) => {
         return {
@@ -194,23 +264,39 @@
     async function Subirdata() {
         try {
             const valordatos = Object.values(datos.value);
-            if (valordatos.some((valor) => !valor)) {
-                swal({
-                    title: "Esperaa!",
-                    text: "Debes llenar todos los campos",
-                    icon: "warning",
-                    buttons: false,
-                    timer: 3500,
-                });
-                return; // Detener la ejecución si al menos un campo está vacío
+            if (Estados.value.name === 'Balance General') {
+                if (valordatos.some((valor) => !valor)) {
+                    swal({
+                        title: "Esperaa!",
+                        text: "Debes llenar todos los campos",
+                        icon: "warning",
+                        buttons: false,
+                        timer: 3500,
+                    });
+                    return; // Detener la ejecución si al menos un campo está vacío
+                }
+            } else if (Estados.value.name === 'Estado de Resultados') {
+                if (!datos.value.tipo || !datos.value.nombre) {
+                    swal({
+                        title: "¡Espera!",
+                        text: "Debes llenar el tipo y el nombre",
+                        icon: "warning",
+                        buttons: false,
+                        timer: 3500,
+                    });
+                    return; // Detener la ejecución si los campos 'tipo' o 'nombre' están vacíos
+                }
             }
             // Guardar en PouchDB
             const pouchDoc = {
                 _id: new Date().toISOString(), // Usamos el mismo ID generado en Firebase para mantener la coherencia
                 ...datos.value
             };
-            await catalogodb.put(pouchDoc);
-
+            if (Estados.value.name === 'Estado de Resultados') {
+                await catalogoER.put(pouchDoc);
+            }else  if (Estados.value.name === 'Balance General') {
+                await catalogoBG.put(pouchDoc);
+            }
             swal({
                 title: "Muy Bien",
                 text: "La cuenta se creo correctamente",
@@ -222,9 +308,8 @@
             // Reiniciar los valores y cerrar el drawer
             MostrarDrawer.value = false;
             datos.value.tipo = "";
-            datos.value.codigo = "";
+            datos.value.subtipo = "";
             datos.value.nombre = "";
-
             // Recargar los datos de PouchDB para reflejar la nueva cuenta en la tabla
             await cargarDatos();
         } catch (e) {
@@ -236,17 +321,16 @@
   
 <style scoped>
     .custom-header-class {
-    background-color: #0B3668; /* Cambia el color de fondo según tus necesidades */
-    color: #ffffff; /* Cambia el color del texto según tus necesidades */
+        background-color: #0B3668; /* Cambia el color de fondo según tus necesidades */
+        color: #ffffff; /* Cambia el color del texto según tus necesidades */
     }
-
     .custom-row-class {
-    background-color: #CEE5EF; /* Cambia el color de fondo según tus necesidades */
-    color: #0B3668; /* Cambia el color del texto según tus necesidades */
-    }
+        background-color: #CEE5EF; /* Cambia el color de fondo según tus necesidades */
+        color: #0B3668; /* Cambia el color del texto según tus necesidades */
+        }
     .boton-deshabilitado {
-    background-color: grey !important;
-    color: white !important;
+        background-color: grey !important;
+        color: white !important;
     }
 </style>
   

@@ -37,6 +37,13 @@ const routes = [
     ]
   },
   {
+    path: '/Ahorizontal',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Analisis-Horizontal.vue') }
+    ]
+  },
+  {
     path: '/transaccion',
     component: () => import('layouts/MainLayout.vue'),
     children: [

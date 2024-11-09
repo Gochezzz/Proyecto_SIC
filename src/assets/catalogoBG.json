@@ -1,0 +1,5 @@
+[
+    { "tipo": "Activo", "subtipo": "Corriente", "nombre": "Caja" },
+    { "tipo": "Pasivo", "subtipo": "Corriente", "nombre": "Proveedores" },
+    { "tipo": "Capital", "subtipo": "Capital Contable", "nombre": "Cap" }
+]
