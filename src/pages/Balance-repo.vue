@@ -74,8 +74,17 @@
           Activos
         </h5>
         <q-table
-          :rows="activos"
-          :columns="columns"
+          :rows="activosCorrientes"
+          :columns="columnsAC"
+          flat
+          dense
+          :pagination="{ rowsPerPage: 0 }"
+          :rows-per-page-options="[]"
+          hide-bottom
+        />
+        <q-table
+          :rows="activosNCorrientes"
+          :columns="columnsANC"
           flat
           dense
           :pagination="{ rowsPerPage: 0 }"
@@ -89,8 +98,18 @@
           Pasivos
         </h5>
         <q-table
-          :rows="pasivos"
-          :columns="columns"
+          :rows="pasivosCorrientes"
+          :columns="columnsPC"
+          flat
+          dense
+          :pagination="{ rowsPerPage: 0 }"
+          :rows-per-page-options="[]"
+          hide-bottom
+          class="letraT"
+        />
+        <q-table
+          :rows="pasivosNCorrientes"
+          :columns="columnsPNC"
           flat
           dense
           :pagination="{ rowsPerPage: 0 }"
@@ -106,7 +125,7 @@
         </h5>
         <q-table
           :rows="patrimonios"
-          :columns="columns"
+          :columns="columnsP"
           flat
           dense
           :pagination="{ rowsPerPage: 0 }"
@@ -146,100 +165,207 @@ const years = Array.from(
   (_, i) => new Date().getFullYear() - i
 );
 
-const activos = ref([]);
-const pasivos = ref([]);
+const activosCorrientes = ref([]);
+const activosNCorrientes = ref([]);
+const pasivosCorrientes = ref([]);
+const pasivosNCorrientes = ref([]);
 const patrimonios = ref([]);
 
 // Columnas de la tabla
-const columns = [
-  { name: "nombre", label: "Cuentas", align: "left", field: "nombre" },
+const columnsAC = [
+  { name: "nombre", label: "Activo Corriente", align: "left", field: "nombre" },
   {
     name: "valor",
-    label: selectedYear.value,
+    label: "",
+    align: "right",
+    field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
+  },
+];
+const columnsANC = [
+  {
+    name: "nombre",
+    label: "Activo No Corriente",
+    align: "left",
+    field: "nombre",
+  },
+  {
+    name: "valor",
+    label: "",
+    align: "right",
+    field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
+  },
+];
+const columnsPC = [
+  {
+    name: "nombre",
+    label: "Pasivo Corriente",
+    align: "left",
+    field: "nombre",
+  },
+  {
+    name: "valor",
+    label: "",
+    align: "right",
+    field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
+  },
+];
+const columnsPNC = [
+  {
+    name: "nombre",
+    label: "Pasivo No Corriente",
+    align: "left",
+    field: "nombre",
+  },
+  {
+    name: "valor",
+    label: "",
+    align: "right",
+    field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
+  },
+];
+const columnsP = [
+  {
+    name: "nombre",
+    label: "Capital Contable",
+    align: "left",
+    field: "nombre",
+  },
+  {
+    name: "valor",
+    label: "",
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
   },
 ];
 //cargar datos
+// Cargar los datos desde la base de datos y agrupar por subtipo
+// Método para cargar los datos desde la base de datos
 const cargarDatosDesdeDB = async () => {
   try {
-    const result = await cuentasdb.allDocs({ include_docs: true });
+    const cuentas = await cuentasdb.allDocs({ include_docs: true });
+    console.log(cuentas);
 
-    // Crear objetos para almacenar los totales de cada cuenta
-    const activosData = {};
-    const pasivosData = {};
-    const patrimoniosData = {};
+    // Inicializar objetos intermedios para acumular montos
+    let activosCorrientesMap = {};
+    let activosNCorrientesMap = {};
+    let pasivosCorrientesMap = {};
+    let pasivosNCorrientesMap = {};
+    let patrimoniosMap = {};
 
-    result.rows.forEach(({ doc }) => {
-      const tipo = doc.tipo; // Tipo de cuenta: Activo, Pasivo, Patrimonio
-      const nombre = doc.nombrec;
-      const monto = parseFloat(doc.monto); // Asegúrate de que el monto sea un número
-      const fecha = doc.fecha;
+    cuentas.rows.forEach((row) => {
+      const cuenta = row.doc;
 
-      // Extraer el año de la fecha del documento
-      const anio = new Date(fecha).getFullYear();
-
-      // Filtrar por el año seleccionado
-      if (anio === selectedYear.value) {
-        // Agrupar y sumar los valores para Activos
-        if (tipo === "Activo") {
-          if (!activosData[nombre]) {
-            activosData[nombre] = 0;
+      if (cuenta.tipo === "Activo") {
+        if (cuenta.subtipo === "Corriente") {
+          if (!activosCorrientesMap[cuenta.nombrec]) {
+            activosCorrientesMap[cuenta.nombrec] = 0;
           }
-          activosData[nombre] += monto; // Sumar el valor numérico
-        }
-        // Agrupar y sumar los valores para Pasivos
-        else if (tipo === "Pasivo") {
-          if (!pasivosData[nombre]) {
-            pasivosData[nombre] = 0;
+          activosCorrientesMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
+        } else if (cuenta.subtipo === "No Corriente") {
+          if (!activosNCorrientesMap[cuenta.nombrec]) {
+            activosNCorrientesMap[cuenta.nombrec] = 0;
           }
-          pasivosData[nombre] += monto; // Sumar el valor numérico
+          activosNCorrientesMap[cuenta.nombrec] +=
+            parseFloat(cuenta.monto) || 0;
         }
-        // Agrupar y sumar los valores para Patrimonio
-        else if (tipo === "Patrimonio") {
-          if (!patrimoniosData[nombre]) {
-            patrimoniosData[nombre] = 0;
+      } else if (cuenta.tipo === "Pasivo") {
+        if (cuenta.subtipo === "Corriente") {
+          if (!pasivosCorrientesMap[cuenta.nombrec]) {
+            pasivosCorrientesMap[cuenta.nombrec] = 0;
           }
-          patrimoniosData[nombre] += monto; // Sumar el valor numérico
+          pasivosCorrientesMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
+        } else if (cuenta.subtipo === "No Corriente") {
+          if (!pasivosNCorrientesMap[cuenta.nombrec]) {
+            pasivosNCorrientesMap[cuenta.nombrec] = 0;
+          }
+          pasivosNCorrientesMap[cuenta.nombrec] +=
+            parseFloat(cuenta.monto) || 0;
         }
+      } else if (cuenta.tipo === "Patrimonio") {
+        if (!patrimoniosMap[cuenta.nombrec]) {
+          patrimoniosMap[cuenta.nombrec] = 0;
+        }
+        patrimoniosMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
       }
     });
 
-    // Convertir los objetos en arrays para que sean compatibles con la tabla
-    activos.value = [
-      {
-        nombre: "Total Activos",
-        valor: Object.values(activosData).reduce((a, b) => a + b, 0),
-      },
-      ...Object.keys(activosData).map((nombre) => ({
+    // Convertir los objetos en arrays para las tablas
+    activosCorrientes.value = Object.entries(activosCorrientesMap).map(
+      ([nombre, valor]) => ({
         nombre,
-        valor: activosData[nombre],
-      })),
-    ];
+        valor,
+      })
+    );
+    activosNCorrientes.value = Object.entries(activosNCorrientesMap).map(
+      ([nombre, valor]) => ({
+        nombre,
+        valor,
+      })
+    );
+    pasivosCorrientes.value = Object.entries(pasivosCorrientesMap).map(
+      ([nombre, valor]) => ({
+        nombre,
+        valor,
+      })
+    );
+    pasivosNCorrientes.value = Object.entries(pasivosNCorrientesMap).map(
+      ([nombre, valor]) => ({
+        nombre,
+        valor,
+      })
+    );
+    patrimonios.value = Object.entries(patrimoniosMap).map(
+      ([nombre, valor]) => ({
+        nombre,
+        valor,
+      })
+    );
 
-    pasivos.value = [
-      {
-        nombre: "Total Pasivos",
-        valor: Object.values(pasivosData).reduce((a, b) => a + b, 0),
-      },
-      ...Object.keys(pasivosData).map((nombre) => ({
-        nombre,
-        valor: pasivosData[nombre],
-      })),
-    ];
+    // Calcular y añadir los totales
+    const sumarValores = (map) =>
+      Object.values(map).reduce((acc, valor) => acc + valor, 0);
 
-    patrimonios.value = [
-      {
-        nombre: "Total Patrimonios",
-        valor: Object.values(patrimoniosData).reduce((a, b) => a + b, 0),
-      },
-      ...Object.keys(patrimoniosData).map((nombre) => ({
-        nombre,
-        valor: patrimoniosData[nombre],
-      })),
-    ];
+    activosCorrientes.value.push({
+      nombre: "Total Activos Corrientes",
+      valor: sumarValores(activosCorrientesMap),
+    });
+    activosNCorrientes.value.push({
+      nombre: "Total Activos No Corrientes",
+      valor: sumarValores(activosNCorrientesMap),
+    });
+    activosNCorrientes.value.push({
+      nombre: "Total Activos",
+      valor:
+        sumarValores(activosNCorrientesMap) +
+        sumarValores(activosCorrientesMap),
+    });
+    pasivosCorrientes.value.push({
+      nombre: "Total Pasivos Corrientes",
+      valor: sumarValores(pasivosCorrientesMap),
+    });
+    pasivosNCorrientes.value.push({
+      nombre: "Total Pasivos No Corrientes",
+      valor: sumarValores(pasivosNCorrientesMap),
+    });
+    pasivosNCorrientes.value.push({
+      nombre: "Total Pasivos",
+      valor:
+        sumarValores(pasivosNCorrientesMap) +
+        sumarValores(pasivosCorrientesMap),
+    });
+    patrimonios.value.push({
+      nombre: "Total Capital Contable",
+      valor: sumarValores(patrimoniosMap),
+    });
+    patrimonios.value.push({
+      nombre: "Total Pasivo y Capital Contable",
+      valor:
+        sumarValores(pasivosCorrientesMap) +
+        sumarValores(pasivosNCorrientesMap) +
+        sumarValores(patrimoniosMap),
+    });
   } catch (error) {
-    console.error("Error al cargar datos desde la base de datos:", error);
+    console.error("Error al cargar los datos:", error);
   }
 };
 
