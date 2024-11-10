@@ -51,6 +51,13 @@ const routes = [
     ]
   },
   {
+    path: '/Dupont',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Dupont-anf.vue') }
+    ]
+  },
+  {
     path: '/transaccion',
     component: () => import('layouts/MainLayout.vue'),
     children: [

@@ -13,12 +13,13 @@
             v-model="Estados.name"
             :options="estados"
             label="Estados Financieros"
-            class="col-5 col-md-3 q-mx-sm margenvariable"
+            class="col-5 col-md-3 q-mx-sm"
             dense
             clearable
             style="color:#0B3668;margin-top: 20px;margin-left: 175px;width: 240px;margin-bottom: 20px;"
         />
-        <div class="Ordenar">
+        <label style="font-size: 40px;color:#0B3668;margin-top: 2px;margin-left: 25%;" v-if="Estados.name !== 'Balance General'&& Estados.name !=='Estado de Resultados'">¡¡¡SELECCIONA UN ESTADO FINANCIERO!!!</label>
+        <div class="Ordenar" v-if="Estados.name === 'Balance General' || Estados.name === 'Estado de Resultados'">
             <div class="fLibro">
                 <div class="cuadroDE">
                     <q-card flat bordered style="border-radius: 10px;">
@@ -27,14 +28,14 @@
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Tipo</label>
                                 <q-select
                                     v-model="datos.tipo"
-                                    :options="Tipos"
+                                    :options="tipoOptions"
                                     label="Tipo"
                                     class="col-5 col-md-3 q-mx-sm"
                                     dense
                                     style="color:#0B3668;margin-top: 10px;margin-left: 12px;"
                                 />
                             </div>
-                            <div style="min-width: 140px"  v-if="Estados.name === 'Balance General'">
+                            <div style="min-width: 140px" v-if="Estados.name === 'Balance General'">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Subtipo</label>
                                 <q-select
                                     v-model="datos.subtipo"
@@ -45,11 +46,11 @@
                                     style="color:#0B3668;margin-top: 10px;margin-left: 12px;"
                                 />
                             </div>
-                            <div  style="min-width: 365px">
+                            <div style="min-width: 365px">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Nombre Cuenta</label>
                                 <q-select
                                     v-model="datos.nombrec"
-                                    :options="mostrarSelecCuenta"
+                                    :options="mostrarSelecCuenta.map(cuenta => cuenta.nombre)"
                                     label="nombre"
                                     class="col-5 col-md-3 q-mx-sm"
                                     dense
@@ -103,13 +104,12 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import swal from "sweetalert";
 import { cuentasBG, catalogoBG, cuentasER, catalogoER } from '../boot/Pouchdb';
 
-//cambiar
-const Estados = ref({name: ""});
-const estados =  ['Estado de Resultados', 'Balance General']
+const Estados = ref({ name: "" });
+const estados =  ['Estado de Resultados', 'Balance General'];
 const router = useRouter();
 const datos = ref({
     tipo: "",
@@ -119,42 +119,81 @@ const datos = ref({
     fecha: ""
 });
 const Tipos = ['Activo', 'Pasivo', 'Capital'];
-const TiposER =  ['Ingreso', 'Gasto']
+const TiposER = ['Ingreso', 'Gasto'];
 const subtipos = ['Corriente', 'No Corriente', 'Capital Contable'];
 const mostrarSelecCuenta = ref([]);
-const date = ref('2024/11/04');
+const tipoOptions = ref(Tipos);
+
+// Cambia las opciones de tipo según el estado seleccionado
+watch(() => Estados.value.name, (newVal) => {
+    tipoOptions.value = newVal === 'Estado de Resultados' ? TiposER : Tipos;
+    datos.value.tipo = "";
+    datos.value.subtipo = "";
+    datos.value.nombrec = "";
+    datos.value.monto = "";
+    datos.value.fecha = "";
+    cargarDatos();
+});
 
 // Navegar a la pantalla de panel
 const regresar = () => {
     router.push("/panel");
 };
 
-// Cargar las cuentas desde la base de datos local `catalogodb`
+// Cargar las cuentas desde la base de datos correspondiente
 const cargarDatos = async () => {
     try {
-        const result = await catalogoBG.allDocs({ include_docs: true });
-        mostrarSelecCuenta.value = result.rows.map(row => row.doc.nombre); // Obtener los nombres de las cuentas
+        const db = Estados.value.name === 'Estado de Resultados' ? catalogoER : catalogoBG;
+        const result = await db.allDocs({ include_docs: true });
+        mostrarSelecCuenta.value = result.rows.map(row => row.doc);
     } catch (error) {
         console.error("Error cargando datos del catálogo:", error);
     }
 };
 
-// Función para agregar datos a la base `cuentasdb`
+// Filtrar cuentas por tipo y subtipo
+const filtrarCuentas = () => {
+    mostrarSelecCuenta.value = mostrarSelecCuenta.value.filter(cuenta => {
+        return cuenta.tipo === datos.value.tipo &&
+               (!datos.value.subtipo || cuenta.subtipo === datos.value.subtipo);
+    });
+};
+
+// Observa cambios en 'tipo' y 'subtipo' y actualiza las opciones de cuenta
+watch([() => datos.value.tipo, () => datos.value.subtipo], () => {
+    cargarDatos().then(() => filtrarCuentas());
+});
+
+// Función para agregar datos a la base de datos correspondiente
 async function agregar() {
     try {
         const valordatos = Object.values(datos.value);
-        if (valordatos.some(valor => !valor)) {
-            swal({
-                title: "¡Espera!",
-                text: "Debes llenar todos los campos",
-                icon: "warning",
-                buttons: false,
-                timer: 3500,
-            });
-            return; // Detener la ejecución si al menos un campo está vacío
+        if (Estados.value.name === 'Balance General') {
+            if (valordatos.some((valor) => !valor)) {
+                swal({
+                    title: "Esperaa!",
+                    text: "Debes llenar todos los campos",
+                    icon: "warning",
+                    buttons: false,
+                    timer: 3500,
+                });
+                return; // Detener la ejecución si al menos un campo está vacío
+            }
+        } else if (Estados.value.name === 'Estado de Resultados') {
+            if (!datos.value.tipo || !datos.value.nombrec || !datos.value.monto || !datos.value.fecha) {
+                swal({
+                    title: "¡Espera!",
+                    text: "Debes llenar el tipo y el nombre",
+                    icon: "warning",
+                    buttons: false,
+                    timer: 3500,
+                });
+                return; // Detener la ejecución si los campos 'tipo' o 'nombre' están vacíos
+            }
         }
 
-        // Guardar el documento en PouchDB `cuentasdb`
+        // Guardar el documento en la base de datos correspondiente
+        const db = Estados.value.name === 'Estado de Resultados' ? cuentasER : cuentasBG;
         const doc = {
             _id: new Date().toISOString(),
             tipo: datos.value.tipo,
@@ -163,7 +202,7 @@ async function agregar() {
             monto: datos.value.monto,
             fecha: datos.value.fecha
         };
-        await cuentasBG.put(doc);
+        await db.put(doc);
 
         swal({
             title: "Muy Bien",
@@ -175,6 +214,7 @@ async function agregar() {
 
         // Limpiar los campos después de guardar
         datos.value.tipo = "";
+        datos.value.subtipo = "";
         datos.value.nombrec = "";
         datos.value.monto = "";
         datos.value.fecha = "";
@@ -185,7 +225,6 @@ async function agregar() {
 }
 
 onMounted(() => {
-    cargarDatos(); // Cargar las cuentas del catálogo al montar el componente
+    cargarDatos();
 });
 </script>
-

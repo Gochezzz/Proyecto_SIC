@@ -117,6 +117,12 @@ const opciones = ref([
     titulo: "Analisis Vertical",
     link: "AVertical",
   },
+  {
+    id:5,
+    url: "schema",
+    titulo: "Analisis Dupont",
+    link: "Dupont",
+  },
 ]);
 
 const funcionParaRedirigir = (link) => {
