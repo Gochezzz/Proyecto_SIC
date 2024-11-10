@@ -271,37 +271,37 @@ const cargarDatosDesdeDB = async () => {
       if (anio === selectedYear.value) {
         if (cuenta.tipo === "Activo") {
           if (cuenta.subtipo === "Corriente") {
-            if (!activosCorrientesMap[cuenta.nombrec]) {
-              activosCorrientesMap[cuenta.nombrec] = 0;
+            if (!activosCorrientesMap[cuenta.nombre]) {
+              activosCorrientesMap[cuenta.nombre] = 0;
             }
-            activosCorrientesMap[cuenta.nombrec] +=
+            activosCorrientesMap[cuenta.nombre] +=
               parseFloat(cuenta.monto) || 0;
           } else if (cuenta.subtipo === "No Corriente") {
-            if (!activosNCorrientesMap[cuenta.nombrec]) {
-              activosNCorrientesMap[cuenta.nombrec] = 0;
+            if (!activosNCorrientesMap[cuenta.nombre]) {
+              activosNCorrientesMap[cuenta.nombre] = 0;
             }
-            activosNCorrientesMap[cuenta.nombrec] +=
+            activosNCorrientesMap[cuenta.nombre] +=
               parseFloat(cuenta.monto) || 0;
           }
         } else if (cuenta.tipo === "Pasivo") {
           if (cuenta.subtipo === "Corriente") {
-            if (!pasivosCorrientesMap[cuenta.nombrec]) {
-              pasivosCorrientesMap[cuenta.nombrec] = 0;
+            if (!pasivosCorrientesMap[cuenta.nombre]) {
+              pasivosCorrientesMap[cuenta.nombre] = 0;
             }
-            pasivosCorrientesMap[cuenta.nombrec] +=
+            pasivosCorrientesMap[cuenta.nombre] +=
               parseFloat(cuenta.monto) || 0;
           } else if (cuenta.subtipo === "No Corriente") {
-            if (!pasivosNCorrientesMap[cuenta.nombrec]) {
-              pasivosNCorrientesMap[cuenta.nombrec] = 0;
+            if (!pasivosNCorrientesMap[cuenta.nombre]) {
+              pasivosNCorrientesMap[cuenta.nombre] = 0;
             }
-            pasivosNCorrientesMap[cuenta.nombrec] +=
+            pasivosNCorrientesMap[cuenta.nombre] +=
               parseFloat(cuenta.monto) || 0;
           }
         } else if (cuenta.tipo === "Patrimonio") {
-          if (!patrimoniosMap[cuenta.nombrec]) {
-            patrimoniosMap[cuenta.nombrec] = 0;
+          if (!patrimoniosMap[cuenta.nombre]) {
+            patrimoniosMap[cuenta.nombre] = 0;
           }
-          patrimoniosMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
+          patrimoniosMap[cuenta.nombre] += parseFloat(cuenta.monto) || 0;
         }
       }
     });
