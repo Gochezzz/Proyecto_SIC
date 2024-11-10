@@ -1,135 +1,60 @@
 <template>
   <div>
     <!-- Barra de herramientas -->
-    <q-toolbar
-      style="
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #cee5ef;
-      "
-    >
+    <q-toolbar style="display: inline-flex; align-items: center; justify-content: center; background-color: #cee5ef;">
       <q-icon
         class="change-color"
         name="arrow_circle_left"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
         @click="regresar"
       />
-      <q-label
-        style="
-          font-size: 40px;
-          color: #0b3668;
-          text-align: left;
-          margin-left: 5px;
-        "
-        >Regresar</q-label
-      >
-      <q-toolbar-title class="tituloBG" style="font-size: 40px">
-        Análisis Vertical
-      </q-toolbar-title>
+      <q-label style="font-size: 40px; color: #0b3668; text-align: left; margin-left: 5px;">Regresar</q-label>
+      <q-toolbar-title class="tituloBG" style="font-size: 40px">Análisis Vertical</q-toolbar-title>
       <q-icon
         name="account_circle"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
       />
     </q-toolbar>
 
-    <!-- Año selector -->
-    <q-card-section style="text-align: center; margin-top: 20px;">
-      <q-select
-        v-model="selectedYear"
-        :options="years"
-        label="Seleccione el Año"
-        style="width: 200px;"
-      />
+    <!-- Año selector centrado -->
+    <q-card-section class="anioSelector">
+      <q-select v-model="selectedYear" :options="years" label="Seleccione el Año" style="width: 200px;" />
     </q-card-section>
 
     <!-- Botones para elegir el análisis -->
     <q-card-section class="botonesAnalisis">
-      <q-btn
-        color="primary"
-        label="Análisis Vertical Balance General"
-        @click="mostrarBalanceGeneral"
-      />
-      <q-btn
-        color="primary"
-        label="Análisis Vertical Estado de Resultados"
-        @click="mostrarEstadoResultados"
-      />
+      <q-btn color="primary" label="Análisis Vertical Balance General" @click="mostrarBalanceGeneral" />
+      <q-btn color="primary" label="Análisis Vertical Estado de Resultados" @click="mostrarEstadoResultados" />
+      <q-btn color="secondary" label="Generar PDF" @click="generarPDF" />
     </q-card-section>
 
     <!-- Card principal -->
-    <q-card class="principalCard">
+    <q-card class="principalCard print-section">
       <!-- Mostrar Balance General o Estado de Resultados según selección -->
       <div v-if="mostrarBalance">
-        <h5 style="margin-left: 5%; margin-bottom: 0%">
-          Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
-          S.A.B. de C.V.)
-        </h5>
-        <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">
-          Análisis Vertical - Balance General
-        </h3>
-        <h6 style="margin-left: 5%; margin-top: 2%">
-          Al 31 de diciembre de {{ selectedYear }}<br />En porcentaje de activos totales
-        </h6>
+        <h5 style="margin-left: 5%; margin-bottom: 0%">Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa, S.A.B. de C.V.)</h5>
+        <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Análisis Vertical - Balance General</h3>
+        <h6 style="margin-left: 5%; margin-top: 2%">Al 31 de diciembre de {{ selectedYear }}<br />En porcentaje de activos totales</h6>
 
         <!-- Tablas para Balance General -->
         <q-card-section class="tablasBG">
-          <h5 style="margin-left: 1%; margin-top: 1%; margin-bottom: 1%">
-            Activos
-          </h5>
-          <q-table
-            :rows="activosBalance"
-            :columns="columnsVertical"
-            flat
-            dense
-            hide-bottom
-          />
+          <h5 style="margin-left: 1%; margin-top: 1%; margin-bottom: 1%">Activos</h5>
+          <q-table :rows="activosBalance" :columns="columnsVertical" flat dense hide-bottom />
         </q-card-section>
         <q-card-section class="tablasBG">
-          <h5 style="margin-left: 1%; margin-top: 1%; margin-bottom: 1%">
-            Pasivos y Patrimonio
-          </h5>
-          <q-table
-            :rows="pasivosPatrimonioBalance"
-            :columns="columnsVertical"
-            flat
-            dense
-            hide-bottom
-          />
+          <h5 style="margin-left: 1%; margin-top: 1%; margin-bottom: 1%">Pasivos y Patrimonio</h5>
+          <q-table :rows="pasivosPatrimonioBalance" :columns="columnsVertical" flat dense hide-bottom />
         </q-card-section>
       </div>
 
       <div v-else-if="mostrarEstado">
-        <h5 style="margin-left: 5%; margin-bottom: 0%">
-          Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
-          S.A.B. de C.V.)
-        </h5>
-        <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">
-          Análisis Vertical - Estado de Resultados
-        </h3>
-        <h6 style="margin-left: 5%; margin-top: 2%">
-          Para el año terminado en {{ selectedYear }}<br />En porcentaje de ventas netas
-        </h6>
+        <h5 style="margin-left: 5%; margin-bottom: 0%">Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa, S.A.B. de C.V.)</h5>
+        <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Análisis Vertical - Estado de Resultados</h3>
+        <h6 style="margin-left: 5%; margin-top: 2%">Para el año terminado en {{ selectedYear }}<br />En porcentaje de ventas netas</h6>
 
         <!-- Tablas para Estado de Resultados -->
         <q-card-section class="tablasBG">
-          <q-table
-            :rows="estadoResultados"
-            :columns="columnsVertical"
-            flat
-            dense
-            hide-bottom
-          />
+          <q-table :rows="estadoResultados" :columns="columnsVertical" flat dense hide-bottom />
         </q-card-section>
       </div>
     </q-card>
@@ -149,7 +74,7 @@ const mostrarEstado = ref(false);
 const selectedYear = ref(2023);
 
 // Lista de años para seleccionar
-const years = [2019,2020,2021,2022,2023];
+const years = [2019, 2020, 2021, 2022, 2023];
 
 // Columnas para análisis vertical
 const columnsVertical = [
@@ -186,12 +111,22 @@ const mostrarEstadoResultados = () => {
   mostrarBalance.value = false;
   mostrarEstado.value = true;
 };
+
+// Función para generar PDF usando el diálogo de impresión
+const generarPDF = () => {
+  window.print();
+};
 </script>
 
 <style scoped>
 .principalCard {
   width: 90%;
   margin: auto;
+}
+.anioSelector {
+  display: flex;
+  justify-content: center; /* Centra el selector de año horizontalmente */
+  margin-top: 20px;
 }
 .botonesAnalisis {
   display: flex;
@@ -201,5 +136,20 @@ const mostrarEstadoResultados = () => {
 }
 .tablasBG {
   margin-top: 20px;
+}
+/* Ocultar todo excepto el contenido relevante al imprimir */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-section, .print-section * {
+    visibility: visible;
+  }
+  .print-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 </style>

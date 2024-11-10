@@ -1,72 +1,42 @@
 <template>
   <div>
-    <!-- Barra de herramientas -->
+    <!-- Barra de herramientas (oculta en PDF) -->
     <q-toolbar
-      style="
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #cee5ef;
-      "
+      style="display: inline-flex; align-items: center; justify-content: center; background-color: #cee5ef;"
+      class="no-print"
     >
       <q-icon
         class="change-color"
         name="arrow_circle_left"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
         @click="regresar"
       />
-      <q-label
-        style="
-          font-size: 40px;
-          color: #0b3668;
-          text-align: left;
-          margin-left: 5px;
-        "
-        >Regresar</q-label
-      >
-      <q-toolbar-title class="tituloBG" style="font-size: 40px">
-        Estado de Resultados
-      </q-toolbar-title>
+      <q-label style="font-size: 40px; color: #0b3668; text-align: left; margin-left: 5px;">Regresar</q-label>
+      <q-toolbar-title class="tituloBG" style="font-size: 40px">Estado de Resultados</q-toolbar-title>
       <q-icon
         name="account_circle"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
       />
     </q-toolbar>
 
+    <!-- Contenedor para Selector de Año y Botón PDF (fuera de la tarjeta y oculto en impresión) -->
+    <div class="no-print" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+      <q-select
+        v-model="selectedYear"
+        :options="years"
+        label="Seleccione el Año"
+        class="AnioPicker"
+        outlined
+        dense
+      />
+      <q-btn color="primary" label="Generar PDF" @click="generatePDF" icon="picture_as_pdf" />
+    </div>
+
     <!-- Card principal -->
-    <q-card class="principalCard">
-      <!-- Selector de Año -->
-      <q-card-section>
-        <q-select
-          v-model="selectedYear"
-          :options="years"
-          label="Seleccione el Año"
-          class="AnioPicker"
-          outlined
-          dense
-        />
-      </q-card-section>
-      <h5 style="margin-left: 5%; margin-bottom: 0%">
-        Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
-        S.A.B. de C.V.)
-      </h5>
-      <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">
-        Estado de Resultados Consolidados
-      </h3>
-      <h6 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">
-        Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos
-        mexicanos
-      </h6>
+    <q-card class="principalCard print-section">
+      <h5 style="margin-left: 5%; margin-bottom: 0%">Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa, S.A.B. de C.V.)</h5>
+      <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Estado de Resultados Consolidados</h3>
+      <h6 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos mexicanos</h6>
 
       <!-- Tablas para Ingresos, Gastos y Utilidad -->
       <q-card-section class="tablasBG">
@@ -80,16 +50,6 @@
           hide-bottom
         />
       </q-card-section>
-
-      <!-- Botón para Generar PDF -->
-      <q-card-section class="generarpdf">
-        <q-btn
-          color="primary"
-          label="Generar PDF"
-          @click="generatePDF"
-          icon="picture_as_pdf"
-        />
-      </q-card-section>
     </q-card>
   </div>
 </template>
@@ -97,20 +57,13 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { jsPDF } from "jspdf";
 
 const router = useRouter();
-
-const regresar = () => {
-  router.push("/reportes");
-};
+const regresar = () => router.push("/reportes");
 
 // Variables reactivas
-const selectedYear = ref(null);
-const years = Array.from(
-  { length: 10 },
-  (_, i) => new Date().getFullYear() - i
-);
+const selectedYear = ref(new Date().getFullYear());
+const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
 const ingresos = ref([
   { nombre: "Ingresos", valor: 13020447 },
@@ -130,59 +83,14 @@ const ingresos = ref([
 
 // Columnas de la tabla
 const columns = [
-  { name: "nombre", label: "", align: "left", field: "nombre" },
+  { name: "nombre", label: "Descripción", align: "left", field: "nombre" },
   {
     name: "valor",
-    label: "",
+    label: "Valor",
     align: "right",
     field: (row) => formatCurrency(row.valor),
   },
 ];
-
-// Método para generar PDF
-const generatePDF = () => {
-  const doc = new jsPDF();
-
-  // Título del PDF
-  doc.text(`Estado de Resultados - Año ${selectedYear.value}`, 10, 10);
-
-  // Ingresos
-  doc.text("Ingresos:", 10, 20);
-  ingresos.value.forEach((ingreso, index) => {
-    doc.text(
-      `${ingreso.nombre}: ${formatCurrency(ingreso.valor)}`,
-      10,
-      30 + index * 10
-    );
-  });
-
-  // Gastos
-  doc.text("Gastos:", 10, 30 + ingresos.value.length * 10);
-  gastos.value.forEach((gasto, index) => {
-    doc.text(
-      `${gasto.nombre}: ${formatCurrency(gasto.valor)}`,
-      10,
-      40 + (ingresos.value.length + index) * 10
-    );
-  });
-
-  // Utilidad
-  doc.text(
-    "Utilidad:",
-    10,
-    40 + (ingresos.value.length + gastos.value.length) * 10
-  );
-  utilidades.value.forEach((utilidad, index) => {
-    doc.text(
-      `${utilidad.nombre}: ${formatCurrency(utilidad.valor)}`,
-      10,
-      50 + (ingresos.value.length + gastos.value.length + index) * 10
-    );
-  });
-
-  // Guardar PDF
-  doc.save(`Estado_Resultados_${selectedYear.value}.pdf`);
-};
 
 // Filtro de formato de moneda
 const formatCurrency = (value) => {
@@ -190,6 +98,11 @@ const formatCurrency = (value) => {
     style: "currency",
     currency: "USD",
   }).format(value);
+};
+
+// Función para abrir el diálogo de impresión
+const generatePDF = () => {
+  window.print();
 };
 </script>
 
@@ -210,8 +123,6 @@ const formatCurrency = (value) => {
 }
 .AnioPicker {
   width: 40%;
-  margin: 0 auto;
-  margin-top: 2%;
 }
 .tablasBG {
   margin-left: 3%;
@@ -219,9 +130,23 @@ const formatCurrency = (value) => {
   margin-top: 0%;
   margin-bottom: 0%;
 }
-.generarpdf {
-  margin: 0 auto;
-  width: 20%;
-  margin-top: 2%;
+
+/* Estilos para impresión */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-section, .print-section * {
+    visibility: visible;
+  }
+  .no-print {
+    display: none;
+  }
+  .print-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 </style>
