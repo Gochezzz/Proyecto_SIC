@@ -255,37 +255,54 @@ const cargarDatosDesdeDB = async () => {
     cuentas.rows.forEach((row) => {
       const cuenta = row.doc;
 
-      if (cuenta.tipo === "Activo") {
-        if (cuenta.subtipo === "Corriente") {
-          if (!activosCorrientesMap[cuenta.nombrec]) {
-            activosCorrientesMap[cuenta.nombrec] = 0;
+      // Verifica si la propiedad 'fecha' existe en el objeto 'cuenta'
+      if (!cuenta.fecha) {
+        console.warn("No se encuentra la fecha para la cuenta:", cuenta);
+        return; // Si no tiene fecha, se salta esta cuenta
+      }
+
+      const fecha = cuenta.fecha; // Deberías estar extrayendo la fecha de 'cuenta'
+      console.log("Fecha de la cuenta:", fecha); // Para verificar la fecha
+
+      const anio = new Date(fecha).getFullYear();
+      console.log("Año de la cuenta:", anio); // Verificar el año extraído
+
+      // Filtrar por el año seleccionado
+      if (anio === selectedYear.value) {
+        if (cuenta.tipo === "Activo") {
+          if (cuenta.subtipo === "Corriente") {
+            if (!activosCorrientesMap[cuenta.nombrec]) {
+              activosCorrientesMap[cuenta.nombrec] = 0;
+            }
+            activosCorrientesMap[cuenta.nombrec] +=
+              parseFloat(cuenta.monto) || 0;
+          } else if (cuenta.subtipo === "No Corriente") {
+            if (!activosNCorrientesMap[cuenta.nombrec]) {
+              activosNCorrientesMap[cuenta.nombrec] = 0;
+            }
+            activosNCorrientesMap[cuenta.nombrec] +=
+              parseFloat(cuenta.monto) || 0;
           }
-          activosCorrientesMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
-        } else if (cuenta.subtipo === "No Corriente") {
-          if (!activosNCorrientesMap[cuenta.nombrec]) {
-            activosNCorrientesMap[cuenta.nombrec] = 0;
+        } else if (cuenta.tipo === "Pasivo") {
+          if (cuenta.subtipo === "Corriente") {
+            if (!pasivosCorrientesMap[cuenta.nombrec]) {
+              pasivosCorrientesMap[cuenta.nombrec] = 0;
+            }
+            pasivosCorrientesMap[cuenta.nombrec] +=
+              parseFloat(cuenta.monto) || 0;
+          } else if (cuenta.subtipo === "No Corriente") {
+            if (!pasivosNCorrientesMap[cuenta.nombrec]) {
+              pasivosNCorrientesMap[cuenta.nombrec] = 0;
+            }
+            pasivosNCorrientesMap[cuenta.nombrec] +=
+              parseFloat(cuenta.monto) || 0;
           }
-          activosNCorrientesMap[cuenta.nombrec] +=
-            parseFloat(cuenta.monto) || 0;
+        } else if (cuenta.tipo === "Patrimonio") {
+          if (!patrimoniosMap[cuenta.nombrec]) {
+            patrimoniosMap[cuenta.nombrec] = 0;
+          }
+          patrimoniosMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
         }
-      } else if (cuenta.tipo === "Pasivo") {
-        if (cuenta.subtipo === "Corriente") {
-          if (!pasivosCorrientesMap[cuenta.nombrec]) {
-            pasivosCorrientesMap[cuenta.nombrec] = 0;
-          }
-          pasivosCorrientesMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
-        } else if (cuenta.subtipo === "No Corriente") {
-          if (!pasivosNCorrientesMap[cuenta.nombrec]) {
-            pasivosNCorrientesMap[cuenta.nombrec] = 0;
-          }
-          pasivosNCorrientesMap[cuenta.nombrec] +=
-            parseFloat(cuenta.monto) || 0;
-        }
-      } else if (cuenta.tipo === "Patrimonio") {
-        if (!patrimoniosMap[cuenta.nombrec]) {
-          patrimoniosMap[cuenta.nombrec] = 0;
-        }
-        patrimoniosMap[cuenta.nombrec] += parseFloat(cuenta.monto) || 0;
       }
     });
 
