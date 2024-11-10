@@ -111,6 +111,12 @@ const opciones = ref([
     titulo: "Analisis Horizontal",
     link: "Ahorizontal",
   },
+  {
+    id: 4,
+    url: "table_chart",
+    titulo: "Analisis Vertical",
+    link: "AVertical",
+  },
 ]);
 
 const funcionParaRedirigir = (link) => {
