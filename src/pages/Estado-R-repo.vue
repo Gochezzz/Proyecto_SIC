@@ -57,8 +57,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, onMounted, watch } from "vue";
-import { jsPDF } from "jspdf";
+import { ref, onMounted } from "vue";
 import { cuentasER } from "../boot/Pouchdb"; // Usamos la base de datos cuentasER
 
 const router = useRouter();
@@ -103,56 +102,104 @@ const loadData = async () => {
 
 // Filtrar y procesar los datos según el año seleccionado
 const filterDataByYear = () => {
+  // Filtrar los datos por el año seleccionado
   const filteredData = data.value.filter(
     item => new Date(item.fecha).getFullYear() === selectedYear.value
   );
 
-  // Calcular los valores de ingresos, costos, gastos e impuestos
+  // Inicializar las variables
   let totalIngresos = 0;
   let totalCostos = 0;
-  let totalGastos = 0;
+  let totalGastosVenta = 0;
+  let totalGastosAdministracion = 0;
+  let totalOtrosGastos = 0;
+  let totalIngresosFinancieros = 0;
+  let totalGastosFinancieros = 0;
+  let totalParticipacion = 0;
   let totalImpuestos = 0;
+  let totalPerdidaCambiaria = 0; // Nueva variable para la pérdida cambiaria
 
+  // Recorremos los datos filtrados
   filteredData.forEach(item => {
-    if (item.tipo === "Ingreso") {
-      totalIngresos += item.monto;
-    } else if (item.tipo === "Costo") {
-      totalCostos += item.monto;
-    } else if (item.tipo === "Gasto") {
-      totalGastos += item.monto;
-    } else if (item.tipo === "Impuesto") {
-      totalImpuestos += item.monto;
+    // Imprimir para ver los datos y asegurarnos de que se están procesando correctamente
+    console.log("Procesando item:", item.nombre, item.tipo, item.monto);
+
+    // Solo los ingresos del tipo correcto
+  // Filtra los datos por el nombre correspondiente
+  if (item.tipo === "Ingreso" && item.nombre === "Ingresos") {
+    totalIngresos += item.monto;
+  } else if (item.tipo === "Costo") {
+    totalCostos += item.monto;
+  } else if (item.tipo === "Gasto") {
+    if (item.nombre === "Gastos de venta") {
+      totalGastosVenta += item.monto;
+    } else if (item.nombre === "Gastos de administración") {
+      totalGastosAdministracion += item.monto;
+    } else if (item.nombre === "Otros gastos, neto") {
+      totalOtrosGastos += item.monto;
     }
-  });
+  } else if (item.tipo === "Impuesto") {
+    totalImpuestos += item.monto;
+  }
 
-  // Calcular utilidades
-  const utilidadBruta = totalIngresos - totalCostos;
-  const utilidadOperativa = utilidadBruta - totalGastos;
-  const utilidadNeta = utilidadOperativa - totalImpuestos;
+  // Ingresa los ingresos y gastos financieros por separado
+  if (item.nombre === "Ingresos financieros") {
+    totalIngresosFinancieros += item.monto;
+  } else if (item.nombre === "Gastos financieros") {
+    totalGastosFinancieros += item.monto;
+  } else if (item.nombre === "Pérdida cambiaria, neta") {
+    totalPerdidaCambiaria += item.monto;
+  }
 
-  // Crear datos para mostrar en la tabla
-  tableData.value = [
-    ...filteredData,
-    { nombre: "Total Ingresos", monto: totalIngresos },
-    { nombre: "Total Costos", monto: totalCostos },
-    { nombre: "Utilidad Bruta", monto: utilidadBruta },
-    { nombre: "Total Gastos", monto: totalGastos },
-    { nombre: "Total Impuestos", monto: totalImpuestos },
-    { nombre: "Utilidad Operativa", monto: utilidadOperativa },
-    { nombre: "Utilidad Neta", monto: utilidadNeta },
-  ];
+  if (item.nombre === "Participación en resultados de asociados") {
+    totalParticipacion += item.monto;
+  }
+});
+
+// Calcula los resultados financieros correctamente ahora que las variables están separadas
+const resultadoFinanciero = -totalIngresosFinancieros - totalGastosFinancieros - totalPerdidaCambiaria;
+
+// Calcula la utilidad neta y otros totales
+const utilidadBruta = totalIngresos + totalCostos;
+const utilidadOperativa = utilidadBruta + (totalGastosVenta + totalGastosAdministracion + totalOtrosGastos);
+const utilidadAntesDeImpuestos = utilidadOperativa - resultadoFinanciero + totalParticipacion;
+const utilidadNeta = utilidadAntesDeImpuestos + totalImpuestos;
+
+// Crear los datos para la tabla
+tableData.value = [
+  { nombre: "Ingresos", monto: totalIngresos },
+  { nombre: "Costo de ventas", monto: totalCostos },
+  { nombre: "Utilidad bruta", monto: utilidadBruta },
+  { nombre: "Gastos de venta", monto: totalGastosVenta },
+  { nombre: "Gastos de administración", monto: totalGastosAdministracion },
+  { nombre: "Otros gastos, neto", monto: totalOtrosGastos },
+  { nombre: "Utilidad de operación", monto: utilidadOperativa },
+  { nombre: "Ingresos financieros", monto: totalIngresosFinancieros },
+  { nombre: "Gastos financieros", monto: totalGastosFinancieros },
+  { nombre: "Pérdida cambiaria, neta", monto: totalPerdidaCambiaria },
+  { nombre: "Resultado financiero, neto", monto: resultadoFinanciero },
+  { nombre: "Participación en resultados de asociados", monto: totalParticipacion },
+  { nombre: "Utilidad antes de impuestos", monto: utilidadAntesDeImpuestos },
+  { nombre: "Impuestos a la utilidad", monto: totalImpuestos },
+  { nombre: "Utilidad neta consolidada", monto: utilidadNeta },
+];
+  // Imprimir el resultado final para ver si es correcto
+  console.log("Total Ingresos: ", totalIngresos);
 };
 
-// Cargar datos iniciales al montar el componente
+
+
+// Cargar los datos al montar el componente
 onMounted(loadData);
 
-// Función para abrir el diálogo de impresión
+// Función para generar el PDF
 const generatePDF = () => {
   window.print();
 };
 </script>
 
 <style scoped>
+/* Estilos para la tabla */
 .custom-header-class {
   background-color: #0b3668;
   color: #ffffff;
