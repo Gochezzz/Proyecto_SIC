@@ -358,6 +358,6 @@ async function agregar() {
 onMounted(() => {
     cargarDatos();
     botonDeshabilitadoERC.value = localStorage.getItem("botonDeshabilitadoERC") === "true";
-    botonDeshabilitadoBGC.value = localStorage.getItem("botonDeshabilitadoBGC") === "rteu";
+    botonDeshabilitadoBGC.value = localStorage.getItem("botonDeshabilitadoBGC") === "false";
 });
 </script>

@@ -58,6 +58,13 @@ const routes = [
     ]
   },
   {
+    path: '/Ratios',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Ratios-all.vue') }
+    ]
+  },
+  {
     path: '/transaccion',
     component: () => import('layouts/MainLayout.vue'),
     children: [

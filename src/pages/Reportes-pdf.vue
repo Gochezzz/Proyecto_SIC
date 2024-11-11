@@ -123,6 +123,12 @@ const opciones = ref([
     titulo: "Analisis Dupont",
     link: "Dupont",
   },
+  {
+    id:6,
+    url: "schema",
+    titulo: "Ratios",
+    link: "Ratios",
+  },
 ]);
 
 const funcionParaRedirigir = (link) => {
