@@ -192,22 +192,22 @@ async function cargarinfoER() {
         }
 
         // Verifica que cuentasBG esté correctamente inicializado
-        if (!cuentasBG || typeof cuentasBG.put !== 'function') {
+        if (!cuentasER || typeof cuentasER.put !== 'function') {
             throw new Error("cuentasBG no está correctamente inicializado.");
         }
 
         // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
-        for (const cuenta of SIGMABG) {
+        for (const cuenta of SIGMAER) {
             // Verifica que los campos necesarios existan en cada cuenta,
             // permitiendo que monto sea 0.
-            if (!cuenta.tipo || !cuenta.subtipo || !cuenta.nombre || !cuenta.fecha || (cuenta.monto === undefined)) {
+            if (!cuenta.tipo || !cuenta.nombre || !cuenta.fecha || (cuenta.monto === undefined)) {
                 throw new Error(`Datos incompletos en la cuenta: ${JSON.stringify(cuenta)}`);
             }
 
             // Genera un ID único
             const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
 
-            await cuentasBG.put({
+            await cuentasER.put({
                 _id: uniqueId,  // ID único
                 tipo: cuenta.tipo,
                 subtipo: "",
