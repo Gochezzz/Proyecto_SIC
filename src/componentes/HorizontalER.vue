@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Card principal con la tabla de resultados -->
-    <q-card class="principalCard print-section">
+    <q-card class="principalCard print-section" style="margin-bottom: 30px;">
       <!-- Selector de Año y Botón PDF -->
       <q-card-section>
         <q-select
@@ -55,11 +55,11 @@ const tableData = ref([]); // Contendrá los datos filtrados y calculados
 
 // Columnas de la tabla
 const columns = [
-  { name: "nombre", label: "Descripción", align: "left", field: "nombre" },
-  { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : "Actual"), align: "right", field: row => formatCurrency(row.monto) },
-  { name: "monto", label: "Año " + (selectedYear2.value != null ? selectedYear2.value : "Anterior"), align: "right", field: row => formatCurrency(row.monto2) },
-  { name: "monto", label: "Variacion Absoluta", align: "right", field:(row) => row.vabsoluta != null ? formatCurrency(row.vabsoluta) : "N/A", },
-  { name: "monto", label: "Variacion Relativa", align: "right", field:(row) => row.vrelativa != null ? formatCurrency2(row.vrelativa) : "N/A", },
+  { name: "nombre", label: "Descripción", align: "left", field: "nombre" , style:"width:150px"},
+  { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : "Actual"), align: "right", field: row => formatCurrency(row.monto), style:"width:50px" },
+  { name: "monto", label: "Año " + (selectedYear2.value != null ? selectedYear2.value : "Anterior"), align: "right", field: row => formatCurrency(row.monto2) ,style:"width:50px"},
+  { name: "monto", label: "Variacion Absoluta", align: "right", field:(row) => row.vabsoluta != null ? formatCurrency(row.vabsoluta) : "N/A", style:"width:50px"},
+  { name: "monto", label: "Variacion Relativa", align: "center", field:(row) => row.vrelativa != null ? formatCurrency2(row.vrelativa) : "N/A", style:"width:50px"},
 ];
 
 // Formato de moneda
@@ -298,7 +298,7 @@ tableData.value = [
   }
 ];
 
- 
+
 };
 
 
@@ -329,45 +329,76 @@ watch(
   background-color: #cee5ef;
   color: #0b3668;
 }
-
 .principalCard {
   width: 70%;
   margin: 0 auto;
   margin-top: 3%;
-}
-
-.AnioPicker {
-  width: 40%;
-}
-
-.tablasBG {
-  margin-left: 3%;
-  margin-right: 3%;
-  margin-top: 0%;
-  margin-bottom: 0%;
-}
-
-/* Estilos para impresión */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .print-section, .print-section * {
-    visibility: visible;
-  }
-  .no-print {
-    display: none;
-  }
-  .print-section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
 }
 .AnioPicker {
   width: 40%;
   margin: 0 auto;
   margin-top: 2%;
 }
+.tablasBG {
+  margin-left: 1%;
+  margin-right: 1%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+.generarpdf {
+  margin: 0 auto;
+  width: 30%;
+  margin-top: 2%;
+}
+.center-container {
+  display: flex; /* Activa Flexbox */
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: -200px; /* Espaciado entre los botones */
+  margin-top: 25%;
+}
+
+/* Estilos para impresión */
+@media print {
+  body * {
+    visibility: hidden; /* Ocultar todo por defecto */
+  }
+
+  .print-section, .print-section * {
+    visibility: visible; /* Hacer visible solo el contenido dentro de .print-section */
+    font-family: 'Arial', sans-serif; /* Cambiar la fuente */
+    font-size: 17pt; /* Ajustar el tamaño de la fuente */
+    color: black; /* Cambiar el color de la fuente */
+    text-align: center;
+  }
+
+  .no-print {
+    display: none; /* No mostrar los elementos con la clase .no-print */
+  }
+
+  .print-section {
+    position: absolute;
+    top: 0; /* Mover la sección a la mitad de la página */
+    left: -6%; /* Mover la sección hacia la derecha */
+    width: 114%; /* Ajustar el ancho */
+    align-items: center;
+  }
+
+  /* Si necesitas mover más o menos, ajusta el margen o las propiedades de posicionamiento */
+  .print-section p {
+    line-height: 1; /* Espaciado entre líneas */
+  }
+}
+
+.center-container {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  align-items: center; /* Alinea los botones verticalmente */
+  gap: -1px; /* Espacio entre los botones */
+}
+
+.button {
+  margin: 7%; /* Asegura que no haya márgenes extra en los botones */
+}
+
 </style>
+

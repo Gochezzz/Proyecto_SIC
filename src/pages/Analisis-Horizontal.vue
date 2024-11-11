@@ -43,21 +43,28 @@
       />
     </q-toolbar>
     <div class="center-container">
-      <q-btn
-        label="Análisis Horizontal de Balance General"
-        color="primary"
-        class="button"
-        @click="analisisBalanceGeneral"
-      />
-      <q-btn
-        label="Análisis Horizontal del Estado de Resultados"
-        color="secondary"
-        class="button"
-        @click="analisisEstadoResultados"
-      />
-    </div>
+  <q-btn
+    label="Análisis Horizontal de Balance General"
+    color="primary"
+    class="button"
+    @click="analisisBalanceGeneral"
+  />
+  <q-btn
+    label="Análisis Horizontal del Estado de Resultados"
+    color="secondary"
+    class="button"
+    @click="analisisEstadoResultados"
+  />
+  <q-btn
+    color="primary"
+    label="Generar PDF"
+    @click="generatePDF"
+    icon="picture_as_pdf"
+  />
+</div>
+
     <!-- Card principal -->
-    <q-card class="principalCard" v-if="mostrarBG">
+    <q-card class="principalCard print-section " style="margin-bottom: 30px;" v-if="mostrarBG">
       <!-- Selector de Año -->
       <q-card-section>
         <q-select
@@ -77,7 +84,7 @@
           dense
         />
       </q-card-section>
-      <h5 style="margin-left: 5%; margin-bottom: 0%">
+      <h5 style="margin-left: 4%; margin-bottom: 0%">
         Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
         S.A.B. de C.V.)
       </h5>
@@ -152,15 +159,6 @@
           :pagination="{ rowsPerPage: 0 }"
           :rows-per-page-options="[]"
           hide-bottom
-        />
-      </q-card-section>
-      <!-- Botón para Generar PDF -->
-      <q-card-section class="generarpdf">
-        <q-btn
-          color="primary"
-          label="Generar PDF"
-          @click="generatePDF"
-          icon="picture_as_pdf"
         />
       </q-card-section>
     </q-card>
@@ -762,58 +760,6 @@ const cargarDatosDesdeDB = async () => {
   }
 };
 // Método para generar PDF
-const generatePDF = () => {
-  const doc = new jsPDF();
-  doc.text(`Balance General - Año ${selectedYear.value}`, 10, 10);
-
-  // Variables para controlar la posición vertical en el PDF
-  let yPosition = 20;
-
-  // Activos
-  doc.text("Activos:", 10, yPosition);
-  yPosition += 10;
-  activos.value.forEach((activo) => {
-    doc.text(
-      `${activo.nombre}: ${formatCurrency(activo.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Espacio entre secciones
-  yPosition += 10;
-
-  // Pasivos
-  doc.text("Pasivos:", 10, yPosition);
-  yPosition += 10;
-  pasivos.value.forEach((pasivo) => {
-    doc.text(
-      `${pasivo.nombre}: ${formatCurrency(pasivo.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Espacio entre secciones
-  yPosition += 10;
-
-  // Patrimonio
-  doc.text("Patrimonio:", 10, yPosition);
-  yPosition += 10;
-  patrimonios.value.forEach((patrimonio) => {
-    doc.text(
-      `${patrimonio.nombre}: ${formatCurrency(patrimonio.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Guardar PDF
-  doc.save(`Balance_General_${selectedYear.value}.pdf`);
-};
 
 // Formato de moneda
 const formatCurrency = (value) => {
@@ -839,6 +785,10 @@ watch(
   },
   { immediate: true }
 );
+
+const generatePDF = () => {
+  window.print();
+};
 </script>
 
 <style scoped>
@@ -875,7 +825,50 @@ watch(
 .center-container {
   display: flex; /* Activa Flexbox */
   justify-content: center; /* Centra los botones horizontalmente */
-  gap: 10px; /* Espaciado entre los botones */
-  margin-top: 3%;
+  gap: -20px; /* Espaciado entre los botones */
+  margin-top: 2%;
 }
+
+/* Estilos para impresión */
+@media print {
+  body * {
+    visibility: hidden; /* Ocultar todo por defecto */
+  }
+
+  .print-section, .print-section * {
+    visibility: visible; /* Hacer visible solo el contenido dentro de .print-section */
+    font-family: 'Arial', sans-serif; /* Cambiar la fuente */
+    font-size: 17pt; /* Ajustar el tamaño de la fuente */
+    color: black; /* Cambiar el color de la fuente */
+    text-align: center;
+  }
+
+  .no-print {
+    display: none; /* No mostrar los elementos con la clase .no-print */
+  }
+
+  .print-section {
+    position: absolute;
+    top: 0; /* Mover la sección a la mitad de la página */
+    left: -7%; /* Mover la sección hacia la derecha */
+    width: 115%; /* Ajustar el ancho */
+  }
+
+  /* Si necesitas mover más o menos, ajusta el margen o las propiedades de posicionamiento */
+  .print-section p {
+    line-height: 1; /* Espaciado entre líneas */
+  }
+}
+
+.center-container {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  align-items: center; /* Alinea los botones verticalmente */
+  gap: 10px; /* Espacio entre los botones */
+}
+
+.button {
+  margin: 0; /* Asegura que no haya márgenes extra en los botones */
+}
+
 </style>
