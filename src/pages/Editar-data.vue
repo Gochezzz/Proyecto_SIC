@@ -65,8 +65,8 @@
 
           <!-- Campo "Nombre" como q-select -->
           <q-td key="nombre" :props="props" :class="customRowClass(props.row)">
-            {{ props.row.nombrec }}
-            <q-popup-edit v-model="props.row.nombrec" title="Cuenta" buttons v-slot="scope">
+            {{ props.row.nombre }}
+            <q-popup-edit v-model="props.row.nombre" title="Cuenta" buttons v-slot="scope">
               <q-select
                 v-model="scope.value"
                 :options="filteredCuentaOptions(props.row).map(cuenta => cuenta.nombre)"
@@ -144,7 +144,7 @@ const activeColumns = computed(() => Estados.value.name === 'Estado de Resultado
 
 // Opciones para los selects
 const Tipos = ['Activo', 'Pasivo', 'Capital'];
-const TiposER = ['Ingreso', 'Gasto'];
+const TiposER =  ['Ingreso', 'Costo', 'Gasto', 'Impuesto']
 const tipoOptions = ref(Tipos);
 const subtipo = ['Corriente', 'No Corriente', 'Capital Contable'];
 const cuentaOptions = ref([]);

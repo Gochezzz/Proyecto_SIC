@@ -1,5 +1,13 @@
 [
-    { "tipo": "Activo", "codigo": "100", "nombre": "Caja" },
-    { "tipo": "Pasivo", "codigo": "200", "nombre": "Proveedores" },
-    { "tipo": "Patrimonio", "codigo": "300", "nombre": "Capital" }
+    { "tipo": "Ingreso", "nombre": "Ingresos"},
+    { "tipo": "Costo", "nombre": "Costo de ventas"},
+    { "tipo": "Gasto", "nombre": "Gastos de venta"},
+    { "tipo": "Gasto", "nombre": "Gastos de administración"},
+    { "tipo": "Gasto", "nombre": "Otros gastos, neto"},
+    { "tipo": "Ingreso", "nombre": "Ingresos financieros"},
+    { "tipo": "Gasto", "nombre": "Gastos financieros"},
+    { "tipo": "Gasto", "nombre": "Pérdida cambiaria, neta"},
+    { "tipo": "Ingreso", "nombre": "Participación en resultados de asociados"},
+    { "tipo": "Impuesto", "nombre": "Impuestos a la utilidad"},
+    { "tipo": "Ingreso", "nombre": "Promedio ponderado de acciones en circulación"}
 ]

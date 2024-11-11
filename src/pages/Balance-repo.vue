@@ -297,7 +297,7 @@ const cargarDatosDesdeDB = async () => {
             pasivosNCorrientesMap[cuenta.nombre] +=
               parseFloat(cuenta.monto) || 0;
           }
-        } else if (cuenta.tipo === "Patrimonio") {
+        } else if (cuenta.tipo === "Capital") {
           if (!patrimoniosMap[cuenta.nombre]) {
             patrimoniosMap[cuenta.nombre] = 0;
           }

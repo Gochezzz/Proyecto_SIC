@@ -145,10 +145,11 @@
     };
     async function cargarinfoBG() {
         try {
+            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
             // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
             for (const cuenta of catalogoBGJ) {
             await catalogoBG.put({
-                _id: new Date().toISOString(),
+                _id: uniqueId,
                 tipo: cuenta.tipo,
                 subtipo: cuenta.subtipo,
                 nombre: cuenta.nombre,
@@ -164,10 +165,11 @@
     }
     async function cargarinfoER() {
         try {
+            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
             // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
             for (const cuenta of catalogoERJ) {
             await catalogoER.put({
-                _id: new Date().toISOString(),
+                _id: uniqueId,
                 tipo: cuenta.tipo,
                 nombre: cuenta.nombre,
             });
@@ -221,7 +223,7 @@
     });
     const Tipos =  ['Activo', 'Pasivo', 'Capital']
     const Subtipos =  ['Corriente', 'No Corriente', 'Capital Contable']
-    const TiposER =  ['Ingreso', 'Gasto']
+    const TiposER =  ['Ingreso', 'Costo', 'Gasto', 'Impuesto']
     const activeTipos = computed(() => {
     return Estados.value.name === 'Estado de Resultados' ? TiposER : Tipos;
     });
@@ -287,9 +289,10 @@
                     return; // Detener la ejecución si los campos 'tipo' o 'nombre' están vacíos
                 }
             }
+            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
             // Guardar en PouchDB
             const pouchDoc = {
-                _id: new Date().toISOString(), // Usamos el mismo ID generado en Firebase para mantener la coherencia
+                _id: uniqueId, // Usamos el mismo ID generado en Firebase para mantener la coherencia
                 ...datos.value
             };
             if (Estados.value.name === 'Estado de Resultados') {

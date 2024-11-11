@@ -49,7 +49,7 @@
                             <div style="min-width: 365px">
                                 <label style="font-size: 16px;color:#0B3668;margin-top: 8px;margin-left: 12px;">Nombre Cuenta</label>
                                 <q-select
-                                    v-model="datos.nombrec"
+                                    v-model="datos.nombre"
                                     :options="mostrarSelecCuenta.map(cuenta => cuenta.nombre)"
                                     label="nombre"
                                     class="col-5 col-md-3 q-mx-sm"
@@ -94,6 +94,24 @@
                                 style="padding-left: 20px; padding-right: 20px"
                                 @click="agregar"
                             />
+                            <q-btn 
+                                :disable="botonDeshabilitadoERC && Estados.name === 'Estado de Resultados'"
+                                :class="{ 'boton-deshabilitado': botonDeshabilitadoERC && Estados.name === 'Estado de Resultados' }"
+                                class="botonagregar efect" 
+                                label="Cargar Cuentas de SIGMA"
+                                v-if="Estados.name === 'Estado de Resultados'"
+                                style="padding-left: 20px; padding-right: 20px;"
+                                @click="cargarinfoER"
+                            />
+                            <q-btn 
+                                :disable="botonDeshabilitadoBGC && Estados.name === 'Balance General'"
+                                :class="{ 'boton-deshabilitado': botonDeshabilitadoBGC && Estados.name === 'Balance General' }"
+                                class="botonagregar efect" 
+                                label="Cargar Cuentas de SIGMA"
+                                v-if="Estados.name === 'Balance General'"
+                                style="padding-left: 20px; padding-right: 20px;"
+                                @click="cargarinfoBG"
+                            />
                         </q-card-section>
                     </q-card>
                 </div>
@@ -107,6 +125,118 @@ import { useRouter } from "vue-router";
 import { ref, onMounted, watch } from 'vue';
 import swal from "sweetalert";
 import { cuentasBG, catalogoBG, cuentasER, catalogoER } from '../boot/Pouchdb';
+import SIGMABG from "src/assets/BGSIGMA.json"
+import SIGMAER from "src/assets/ERSIGMA.json"
+
+const botonDeshabilitadoERC = ref(localStorage.getItem("botonDeshabilitadoERC") === "true");
+const botonDeshabilitadoBGC = ref(localStorage.getItem("botonDeshabilitadoBGC") === "true");
+
+async function cargarinfoBG() {
+    try {
+        // Verifica que SIGMABG sea un arreglo válido
+        if (!Array.isArray(SIGMABG)) {
+            throw new Error("SIGMABG no es un arreglo válido.");
+        }
+
+        // Verifica que cuentasBG esté correctamente inicializado
+        if (!cuentasBG || typeof cuentasBG.put !== 'function') {
+            throw new Error("cuentasBG no está correctamente inicializado.");
+        }
+
+        // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
+        for (const cuenta of SIGMABG) {
+            // Verifica que los campos necesarios existan en cada cuenta,
+            // permitiendo que monto sea 0.
+            if (!cuenta.tipo || !cuenta.subtipo || !cuenta.nombre || !cuenta.fecha || (cuenta.monto === undefined)) {
+                throw new Error(`Datos incompletos en la cuenta: ${JSON.stringify(cuenta)}`);
+            }
+
+            // Genera un ID único
+            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            await cuentasBG.put({
+                _id: uniqueId,  // ID único
+                tipo: cuenta.tipo,
+                subtipo: cuenta.subtipo,
+                nombre: cuenta.nombre,
+                monto: cuenta.monto,
+                fecha: cuenta.fecha,
+            });
+        }
+
+        // Deshabilita el botón y guarda el estado en localStorage
+        botonDeshabilitadoBGC.value = true;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem("botonDeshabilitadoBGC", "true");
+        } else {
+            console.error("localStorage no está disponible.");
+        }
+
+        // Llama a la función cargarDatos y maneja posibles errores
+        if (typeof cargarDatos === 'function') {
+            await cargarDatos();
+        } else {
+            console.error("cargarDatos no está definida.");
+        }
+
+        console.log("Catálogo BG cargado en PouchDB.");
+    } catch (error) {
+        console.error("Error al cargar el catálogo en PouchDB:", error);
+    }
+}
+async function cargarinfoER() {
+    try {
+        // Verifica que SIGMABG sea un arreglo válido
+        if (!Array.isArray(SIGMAER)) {
+            throw new Error("SIGMABG no es un arreglo válido.");
+        }
+
+        // Verifica que cuentasBG esté correctamente inicializado
+        if (!cuentasBG || typeof cuentasBG.put !== 'function') {
+            throw new Error("cuentasBG no está correctamente inicializado.");
+        }
+
+        // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
+        for (const cuenta of SIGMABG) {
+            // Verifica que los campos necesarios existan en cada cuenta,
+            // permitiendo que monto sea 0.
+            if (!cuenta.tipo || !cuenta.subtipo || !cuenta.nombre || !cuenta.fecha || (cuenta.monto === undefined)) {
+                throw new Error(`Datos incompletos en la cuenta: ${JSON.stringify(cuenta)}`);
+            }
+
+            // Genera un ID único
+            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            await cuentasBG.put({
+                _id: uniqueId,  // ID único
+                tipo: cuenta.tipo,
+                subtipo: "",
+                nombre: cuenta.nombre,
+                monto: cuenta.monto,
+                fecha: cuenta.fecha,
+            });
+        }
+
+        // Deshabilita el botón y guarda el estado en localStorage
+        botonDeshabilitadoERC.value = true;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem("botonDeshabilitadoERC", "true");
+        } else {
+            console.error("localStorage no está disponible.");
+        }
+
+        // Llama a la función cargarDatos y maneja posibles errores
+        if (typeof cargarDatos === 'function') {
+            await cargarDatos();
+        } else {
+            console.error("cargarDatos no está definida.");
+        }
+
+        console.log("Catálogo ER cargado en PouchDB.");
+    } catch (error) {
+        console.error("Error al cargar el catálogo en PouchDB:", error);
+    }
+}
 
 const Estados = ref({ name: "" });
 const estados =  ['Estado de Resultados', 'Balance General'];
@@ -114,12 +244,12 @@ const router = useRouter();
 const datos = ref({
     tipo: "",
     subtipo: "",
-    nombrec: "",
+    nombre: "",
     monto: "",
     fecha: ""
 });
 const Tipos = ['Activo', 'Pasivo', 'Capital'];
-const TiposER = ['Ingreso', 'Gasto'];
+const TiposER =  ['Ingreso', 'Costo', 'Gasto', 'Impuesto']
 const subtipos = ['Corriente', 'No Corriente', 'Capital Contable'];
 const mostrarSelecCuenta = ref([]);
 const tipoOptions = ref(Tipos);
@@ -129,7 +259,7 @@ watch(() => Estados.value.name, (newVal) => {
     tipoOptions.value = newVal === 'Estado de Resultados' ? TiposER : Tipos;
     datos.value.tipo = "";
     datos.value.subtipo = "";
-    datos.value.nombrec = "";
+    datos.value.nombre = "";
     datos.value.monto = "";
     datos.value.fecha = "";
     cargarDatos();
@@ -180,7 +310,7 @@ async function agregar() {
                 return; // Detener la ejecución si al menos un campo está vacío
             }
         } else if (Estados.value.name === 'Estado de Resultados') {
-            if (!datos.value.tipo || !datos.value.nombrec || !datos.value.monto || !datos.value.fecha) {
+            if (!datos.value.tipo || !datos.value.nombre || !datos.value.monto || !datos.value.fecha) {
                 swal({
                     title: "¡Espera!",
                     text: "Debes llenar el tipo y el nombre",
@@ -194,11 +324,12 @@ async function agregar() {
 
         // Guardar el documento en la base de datos correspondiente
         const db = Estados.value.name === 'Estado de Resultados' ? cuentasER : cuentasBG;
+        const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
         const doc = {
-            _id: new Date().toISOString(),
+            _id: uniqueId,
             tipo: datos.value.tipo,
             subtipo: datos.value.subtipo,
-            nombrec: datos.value.nombrec,
+            nombre: datos.value.nombre,
             monto: datos.value.monto,
             fecha: datos.value.fecha
         };
@@ -215,7 +346,7 @@ async function agregar() {
         // Limpiar los campos después de guardar
         datos.value.tipo = "";
         datos.value.subtipo = "";
-        datos.value.nombrec = "";
+        datos.value.nombre = "";
         datos.value.monto = "";
         datos.value.fecha = "";
 
@@ -226,5 +357,7 @@ async function agregar() {
 
 onMounted(() => {
     cargarDatos();
+    botonDeshabilitadoERC.value = localStorage.getItem("botonDeshabilitadoERC") === "true";
+    botonDeshabilitadoBGC.value = localStorage.getItem("botonDeshabilitadoBGC") === "rteu";
 });
 </script>
