@@ -107,86 +107,74 @@ const filterDataByYear = () => {
     item => new Date(item.fecha).getFullYear() === selectedYear.value
   );
 
-  // Inicializar las variables
-  let totalIngresos = 0;
-  let totalCostos = 0;
-  let totalGastosVenta = 0;
-  let totalGastosAdministracion = 0;
-  let totalOtrosGastos = 0;
-  let totalIngresosFinancieros = 0;
-  let totalGastosFinancieros = 0;
-  let totalParticipacion = 0;
-  let totalImpuestos = 0;
-  let totalPerdidaCambiaria = 0; // Nueva variable para la pérdida cambiaria
+  let Ingresos = 0;
+  let Costoventa = 0;
+  let GastoVenta = 0;
+  let GastoAdmi = 0;
+  let Otrogasto = 0;
+  let IngresoFin = 0;
+  let GastoFin = 0;
+  let PerdidaCamb = 0;
+  let PartenResul = 0;
+  let ImpuestosUT = 0;
+  let PormedioAc = 0;
 
   // Recorremos los datos filtrados
   filteredData.forEach(item => {
-    // Imprimir para ver los datos y asegurarnos de que se están procesando correctamente
-    console.log("Procesando item:", item.nombre, item.tipo, item.monto);
-
-    // Solo los ingresos del tipo correcto
-  // Filtra los datos por el nombre correspondiente
-  if (item.tipo === "Ingreso" && item.nombre === "Ingresos") {
-    totalIngresos += item.monto;
-  } else if (item.tipo === "Costo") {
-    totalCostos += item.monto;
-  } else if (item.tipo === "Gasto") {
-    if (item.nombre === "Gastos de venta") {
-      totalGastosVenta += item.monto;
+    if (item.nombre === "Ingresos") {
+      Ingresos += item.monto;
+    } else if (item.nombre === "Costo de ventas") {
+      Costoventa += item.monto;
+    } else if (item.nombre === "Gastos de venta") {
+      GastoVenta += item.monto;
     } else if (item.nombre === "Gastos de administración") {
-      totalGastosAdministracion += item.monto;
-    } else if (item.nombre === "Otros gastos, neto") {
-      totalOtrosGastos += item.monto;
+      GastoAdmi += item.monto;
+    }else if (item.nombre === "Otros gastos, neto") {
+      Otrogasto += item.monto;
+    } else if (item.nombre === "Ingresos financieros") {
+      IngresoFin += item.monto;
+    } else if (item.nombre === "Gastos financieros") {
+      GastoFin += item.monto;
+    } else if (item.nombre === "Pérdida cambiaria, neta") {
+      PerdidaCamb += item.monto;
+    } else if (item.nombre === "Participación en resultados de asociados") {
+      PartenResul += item.monto;
+    } else if (item.nombre === "Impuestos a la utilidad") {
+      ImpuestosUT += item.monto;
+    } else if (item.nombre === "Promedio ponderado de acciones en circulación") {
+      PormedioAc += item.monto;
     }
-  } else if (item.tipo === "Impuesto") {
-    totalImpuestos += item.monto;
-  }
-
-  // Ingresa los ingresos y gastos financieros por separado
-  if (item.nombre === "Ingresos financieros") {
-    totalIngresosFinancieros += item.monto;
-  } else if (item.nombre === "Gastos financieros") {
-    totalGastosFinancieros += item.monto;
-  } else if (item.nombre === "Pérdida cambiaria, neta") {
-    totalPerdidaCambiaria += item.monto;
-  }
-
-  if (item.nombre === "Participación en resultados de asociados") {
-    totalParticipacion += item.monto;
-  }
-});
+  });
 
 // Calcula los resultados financieros correctamente ahora que las variables están separadas
-const resultadoFinanciero = -totalIngresosFinancieros - totalGastosFinancieros - totalPerdidaCambiaria;
 
 // Calcula la utilidad neta y otros totales
-const utilidadBruta = totalIngresos + totalCostos;
-const utilidadOperativa = utilidadBruta + (totalGastosVenta + totalGastosAdministracion + totalOtrosGastos);
-const utilidadAntesDeImpuestos = utilidadOperativa - resultadoFinanciero + totalParticipacion;
-const utilidadNeta = utilidadAntesDeImpuestos + totalImpuestos;
+const utilidadBruta = Ingresos + Costoventa;
+const utilidadOperativa = utilidadBruta + (GastoVenta + Otrogasto + GastoAdmi);
+const resultadoFinanciero = IngresoFin + GastoFin + PerdidaCamb;
+const utilidadAntesDeImpuestos = utilidadOperativa + resultadoFinanciero + PartenResul;
+const utilidadNeta = utilidadAntesDeImpuestos + ImpuestosUT;
 
 // Crear los datos para la tabla
 tableData.value = [
-  { nombre: "Ingresos", monto: totalIngresos },
-  { nombre: "Costo de ventas", monto: totalCostos },
+  { nombre: "Ingresos", monto: Ingresos },
+  { nombre: "Costo de ventas", monto: Costoventa },
   { nombre: "Utilidad bruta", monto: utilidadBruta },
-  { nombre: "Gastos de venta", monto: totalGastosVenta },
-  { nombre: "Gastos de administración", monto: totalGastosAdministracion },
-  { nombre: "Otros gastos, neto", monto: totalOtrosGastos },
+  { nombre: "Gastos de venta", monto: GastoVenta },
+  { nombre: "Gastos de administración", monto: GastoAdmi },
+  { nombre: "Otros gastos, neto", monto: Otrogasto },
   { nombre: "Utilidad de operación", monto: utilidadOperativa },
-  { nombre: "Ingresos financieros", monto: totalIngresosFinancieros },
-  { nombre: "Gastos financieros", monto: totalGastosFinancieros },
-  { nombre: "Pérdida cambiaria, neta", monto: totalPerdidaCambiaria },
+  { nombre: "Ingresos financieros", monto: IngresoFin },
+  { nombre: "Gastos financieros", monto: GastoFin },
+  { nombre: "Pérdida cambiaria, neta", monto: PerdidaCamb },
   { nombre: "Resultado financiero, neto", monto: resultadoFinanciero },
-  { nombre: "Participación en resultados de asociados", monto: totalParticipacion },
+  { nombre: "Participación en resultados de asociados", monto: PartenResul },
   { nombre: "Utilidad antes de impuestos", monto: utilidadAntesDeImpuestos },
-  { nombre: "Impuestos a la utilidad", monto: totalImpuestos },
+  { nombre: "Impuestos a la utilidad", monto: ImpuestosUT },
   { nombre: "Utilidad neta consolidada", monto: utilidadNeta },
 ];
-  // Imprimir el resultado final para ver si es correcto
-  console.log("Total Ingresos: ", totalIngresos);
+ 
 };
-
 
 
 // Cargar los datos al montar el componente
