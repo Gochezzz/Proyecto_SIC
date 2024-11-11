@@ -31,7 +31,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watch } from "vue";
+  import { ref, onMounted, watch, computed } from "vue";
   import { cuentasER } from "../boot/Pouchdb"; // Usamos la base de datos cuentasER
   
   // Variables reactivas
@@ -42,11 +42,11 @@
   const tableData = ref([]); // Contendrá los datos filtrados y calculados
   
   // Columnas de la tabla
-  const columns = [
-    { name: "nombre", label: "Descripción", align: "left", field: "nombre" },
+  const columns = computed(() =>[
+    { name: "nombre", label: "Cuenta", align: "left", field: "nombre" },
     { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : ""), align: "right", field: row => formatCurrency(row.monto) },
     { name: "monto", label: "Variacion Relativa", align: "right", field:(row) => row.vrelativa != null ? formatCurrency2(row.vrelativa) : "N/A", },
-  ];
+  ]);
   
   // Formato de moneda
   const formatCurrency = value => {

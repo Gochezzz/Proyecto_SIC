@@ -71,7 +71,7 @@
           v-model="selectedYear"
           :options="years"
           label="Seleccione el Año Actual"
-          class="AnioPicker"
+          class="AnioPicker no-print"
           outlined
           dense
         />
@@ -79,7 +79,7 @@
           v-model="selectedYear2"
           :options="years"
           label="Seleccione el Año Anterior"
-          class="AnioPicker"
+          class="AnioPicker no-print"
           outlined
           dense
         />

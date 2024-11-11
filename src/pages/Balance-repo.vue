@@ -133,8 +133,7 @@
 <script setup>
 
 import { useRouter } from "vue-router";
-import { ref, onMounted, watch } from "vue";
-import { jsPDF } from "jspdf";
+import { ref, onMounted, watch, computed } from "vue";
 import { cuentasBG, catalogoBG } from "../boot/Pouchdb";
 
 const router = useRouter();
@@ -157,15 +156,15 @@ const pasivosNCorrientes = ref([]);
 const patrimonios = ref([]);
 
 // Columnas de la tabla
-const columnsAC = [
+const columnsAC = computed(() => [
   { name: "nombre", label: "Activo Corriente", align: "left", field: "nombre" },
   {
     name: "valor",
-    label: "",
+    label: "Año " + (selectedYear.value != null ? selectedYear.value : ""),
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
   },
-];
+]);
 const columnsANC = [
   {
     name: "nombre",

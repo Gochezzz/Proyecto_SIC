@@ -57,7 +57,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { cuentasER } from "../boot/Pouchdb"; // Usamos la base de datos cuentasER
 
 const router = useRouter();
@@ -74,14 +74,14 @@ const data = ref([]); // Contendrá todos los datos del estado de resultados
 const tableData = ref([]); // Contendrá los datos filtrados y calculados
 
 // Columnas de la tabla
-const columns = [
-  { name: "nombre", label: "Descripción", align: "left", field: "nombre" },
-  { name: "monto", label: "Valor", align: "right", field: row => formatCurrency(row.monto) },
-];
+const columns = computed(() => [
+  { name: "nombre", label: "Cuenta", align: "left", field: "nombre" },
+  { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : ""), align: "right", field: row => formatCurrency(row.monto) },
+]);
 
 // Formato de moneda
 const formatCurrency = value => {
-  return new Intl.NumberFormat("es-ES", {
+  return new Intl.NumberFormat("es-MX", {
     style: "currency",
     currency: "MXN",
   }).format(value);

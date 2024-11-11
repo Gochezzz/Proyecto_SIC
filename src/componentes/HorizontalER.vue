@@ -8,7 +8,7 @@
           v-model="selectedYear"
           :options="years"
           label="Seleccione el Año Actual"
-          class="AnioPicker"
+          class="AnioPicker no-print"
           outlined
           dense
         />
@@ -16,7 +16,7 @@
           v-model="selectedYear2"
           :options="years"
           label="Seleccione el Año Anterior"
-          class="AnioPicker"
+          class="AnioPicker no-print"
           outlined
           dense
         />
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed} from "vue";
 import { cuentasER } from "../boot/Pouchdb"; // Usamos la base de datos cuentasER
 
 // Variables reactivas
@@ -54,13 +54,13 @@ const data = ref([]); // Contendrá todos los datos del estado de resultados
 const tableData = ref([]); // Contendrá los datos filtrados y calculados
 
 // Columnas de la tabla
-const columns = [
+const columns = computed(() => [
   { name: "nombre", label: "Descripción", align: "left", field: "nombre" , style:"width:150px"},
   { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : "Actual"), align: "right", field: row => formatCurrency(row.monto), style:"width:50px" },
   { name: "monto", label: "Año " + (selectedYear2.value != null ? selectedYear2.value : "Anterior"), align: "right", field: row => formatCurrency(row.monto2) ,style:"width:50px"},
   { name: "monto", label: "Variacion Absoluta", align: "right", field:(row) => row.vabsoluta != null ? formatCurrency(row.vabsoluta) : "N/A", style:"width:50px"},
   { name: "monto", label: "Variacion Relativa", align: "center", field:(row) => row.vrelativa != null ? formatCurrency2(row.vrelativa) : "N/A", style:"width:50px"},
-];
+]);
 
 // Formato de moneda
 const formatCurrency = value => {
