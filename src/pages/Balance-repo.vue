@@ -49,7 +49,7 @@
     </q-card>
 
     <!-- Contenido de Sigma Alimentos (incluye tablas y datos) -->
-    <q-card class="principalCard print-section">
+    <q-card class="principalCard print-section" style="margin-bottom: 30px;">
       <h5 style="margin-left: 5%; margin-bottom: 0%">
         Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
         S.A.B. de C.V.)
