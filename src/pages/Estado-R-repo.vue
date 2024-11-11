@@ -34,7 +34,7 @@
     </div>
 
     <!-- Card principal con la tabla de resultados -->
-    <q-card class="principalCard print-section">
+    <q-card class="principalCard print-section" style="margin-bottom: 30px;">
       <h5 style="margin-left: 5%; margin-bottom: 0%">Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa, S.A.B. de C.V.)</h5>
       <h3 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Estado de Resultados Consolidados</h3>
       <h6 style="margin-left: 5%; margin-top: 2%; margin-bottom: 0%">Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos mexicanos</h6>
