@@ -56,15 +56,24 @@ const tableData = ref([]); // Contendrá los datos filtrados y calculados
 // Columnas de la tabla
 const columns = [
   { name: "nombre", label: "Descripción", align: "left", field: "nombre" },
-  { name: "monto", label: "Valor", align: "right", field: row => formatCurrency(row.monto) },
+  { name: "monto", label: "Año " + (selectedYear.value != null ? selectedYear.value : "Actual"), align: "right", field: row => formatCurrency(row.monto) },
+  { name: "monto", label: "Año " + (selectedYear2.value != null ? selectedYear2.value : "Anterior"), align: "right", field: row => formatCurrency(row.monto2) },
+  { name: "monto", label: "Variacion Absoluta", align: "right", field:(row) => row.vabsoluta != null ? formatCurrency(row.vabsoluta) : "N/A", },
+  { name: "monto", label: "Variacion Relativa", align: "right", field:(row) => row.vrelativa != null ? formatCurrency2(row.vrelativa) : "N/A", },
 ];
 
 // Formato de moneda
 const formatCurrency = value => {
-  return new Intl.NumberFormat("es-ES", {
+  return new Intl.NumberFormat("es-MX", {
     style: "currency",
     currency: "MXN",
   }).format(value);
+};
+const formatCurrency2 = (value) => {
+  return new Intl.NumberFormat("es-ES", {
+    style: "percent",
+    minimumFractionDigits: 2, // Puedes ajustar las fracciones si es necesario
+  }).format(value / 100); // Asegúrate de dividir entre 100 si el valor es 20 para obtener el 20%
 };
 
 // Cargar datos desde la base de datos (cuentasER)
@@ -85,6 +94,9 @@ const filterDataByYear = () => {
   const filteredData = data.value.filter(
     item => new Date(item.fecha).getFullYear() === selectedYear.value
   );
+  const filteredData2 = data.value.filter(
+    item => new Date(item.fecha).getFullYear() === selectedYear2.value
+  );
 
   let Ingresos = 0;
   let Costoventa = 0;
@@ -97,6 +109,18 @@ const filterDataByYear = () => {
   let PartenResul = 0;
   let ImpuestosUT = 0;
   let PormedioAc = 0;
+
+  let Ingresos2 = 0;
+  let Costoventa2 = 0;
+  let GastoVenta2 = 0;
+  let GastoAdmi2 = 0;
+  let Otrogasto2 = 0;
+  let IngresoFin2 = 0;
+  let GastoFin2 = 0;
+  let PerdidaCamb2 = 0;
+  let PartenResul2 = 0;
+  let ImpuestosUT2 = 0;
+  let PormedioAc2 = 0;
 
   // Recorremos los datos filtrados
   filteredData.forEach(item => {
@@ -124,6 +148,31 @@ const filterDataByYear = () => {
       PormedioAc += item.monto;
     }
   });
+  filteredData2.forEach(item => {
+    if (item.nombre === "Ingresos") {
+      Ingresos2 += item.monto;
+    } else if (item.nombre === "Costo de ventas") {
+      Costoventa2+= item.monto;
+    } else if (item.nombre === "Gastos de venta") {
+      GastoVenta2 += item.monto;
+    } else if (item.nombre === "Gastos de administración") {
+      GastoAdmi2 += item.monto;
+    }else if (item.nombre === "Otros gastos, neto") {
+      Otrogasto2 += item.monto;
+    } else if (item.nombre === "Ingresos financieros") {
+      IngresoFin2 += item.monto;
+    } else if (item.nombre === "Gastos financieros") {
+      GastoFin2 += item.monto;
+    } else if (item.nombre === "Pérdida cambiaria, neta") {
+      PerdidaCamb2 += item.monto;
+    } else if (item.nombre === "Participación en resultados de asociados") {
+      PartenResul2 += item.monto;
+    } else if (item.nombre === "Impuestos a la utilidad") {
+      ImpuestosUT2 += item.monto;
+    } else if (item.nombre === "Promedio ponderado de acciones en circulación") {
+      PormedioAc2 += item.monto;
+    }
+  });
 
 // Calcula los resultados financieros correctamente ahora que las variables están separadas
 
@@ -134,24 +183,121 @@ const resultadoFinanciero = IngresoFin + GastoFin + PerdidaCamb;
 const utilidadAntesDeImpuestos = utilidadOperativa + resultadoFinanciero + PartenResul;
 const utilidadNeta = utilidadAntesDeImpuestos + ImpuestosUT;
 
+const utilidadBruta2 = Ingresos2 + Costoventa2;
+const utilidadOperativa2 = utilidadBruta2 + (GastoVenta2 + Otrogasto2 + GastoAdmi2);
+const resultadoFinanciero2 = IngresoFin2 + GastoFin2 + PerdidaCamb2;
+const utilidadAntesDeImpuestos2 = utilidadOperativa2 + resultadoFinanciero2 + PartenResul2;
+const utilidadNeta2 = utilidadAntesDeImpuestos2 + ImpuestosUT2;
+
 // Crear los datos para la tabla
 tableData.value = [
-  { nombre: "Ingresos", monto: Ingresos },
-  { nombre: "Costo de ventas", monto: Costoventa },
-  { nombre: "Utilidad bruta", monto: utilidadBruta },
-  { nombre: "Gastos de venta", monto: GastoVenta },
-  { nombre: "Gastos de administración", monto: GastoAdmi },
-  { nombre: "Otros gastos, neto", monto: Otrogasto },
-  { nombre: "Utilidad de operación", monto: utilidadOperativa },
-  { nombre: "Ingresos financieros", monto: IngresoFin },
-  { nombre: "Gastos financieros", monto: GastoFin },
-  { nombre: "Pérdida cambiaria, neta", monto: PerdidaCamb },
-  { nombre: "Resultado financiero, neto", monto: resultadoFinanciero },
-  { nombre: "Participación en resultados de asociados", monto: PartenResul },
-  { nombre: "Utilidad antes de impuestos", monto: utilidadAntesDeImpuestos },
-  { nombre: "Impuestos a la utilidad", monto: ImpuestosUT },
-  { nombre: "Utilidad neta consolidada", monto: utilidadNeta },
+  {
+    nombre: "Ingresos",
+    monto: Ingresos,
+    monto2: Ingresos2,
+    vabsoluta: Ingresos - Ingresos2,
+    vrelativa: ((Ingresos / Ingresos2) - 1) * 100
+  },
+  {
+    nombre: "Costo de ventas",
+    monto: Costoventa,
+    monto2: Costoventa2,
+    vabsoluta: Costoventa - Costoventa2,
+    vrelativa: ((Costoventa / Costoventa2) - 1) * 100
+  },
+  {
+    nombre: "Utilidad bruta",
+    monto: utilidadBruta,
+    monto2: utilidadBruta2,
+    vabsoluta: utilidadBruta - utilidadBruta2,
+    vrelativa: ((utilidadBruta / utilidadBruta2) - 1) * 100
+  },
+  {
+    nombre: "Gastos de venta",
+    monto: GastoVenta,
+    monto2: GastoVenta2,
+    vabsoluta: GastoVenta - GastoVenta2,
+    vrelativa: ((GastoVenta / GastoVenta2) - 1) * 100
+  },
+  {
+    nombre: "Gastos de administración",
+    monto: GastoAdmi,
+    monto2: GastoAdmi2,
+    vabsoluta: GastoAdmi - GastoAdmi2,
+    vrelativa: ((GastoAdmi / GastoAdmi2) - 1) * 100
+  },
+  {
+    nombre: "Otros gastos, neto",
+    monto: Otrogasto,
+    monto2: Otrogasto2,
+    vabsoluta: Otrogasto - Otrogasto2,
+    vrelativa: ((Otrogasto / Otrogasto2) - 1) * 100
+  },
+  {
+    nombre: "Utilidad de operación",
+    monto: utilidadOperativa,
+    monto2: utilidadOperativa2,
+    vabsoluta: utilidadOperativa - utilidadOperativa2,
+    vrelativa: ((utilidadOperativa / utilidadOperativa2) - 1) * 100
+  },
+  {
+    nombre: "Ingresos financieros",
+    monto: IngresoFin,
+    monto2: IngresoFin2,
+    vabsoluta: IngresoFin - IngresoFin2,
+    vrelativa: ((IngresoFin / IngresoFin2) - 1) * 100
+  },
+  {
+    nombre: "Gastos financieros",
+    monto: GastoFin,
+    monto2: GastoFin2,
+    vabsoluta: GastoFin - GastoFin2,
+    vrelativa: ((GastoFin / GastoFin2) - 1) * 100
+  },
+  {
+    nombre: "Pérdida cambiaria, neta",
+    monto: PerdidaCamb,
+    monto2: PerdidaCamb2,
+    vabsoluta: PerdidaCamb - PerdidaCamb2,
+    vrelativa: ((PerdidaCamb / PerdidaCamb2) - 1) * 100
+  },
+  {
+    nombre: "Resultado financiero, neto",
+    monto: resultadoFinanciero,
+    monto2: resultadoFinanciero2,
+    vabsoluta: resultadoFinanciero - resultadoFinanciero2,
+    vrelativa: ((resultadoFinanciero / resultadoFinanciero2) - 1) * 100
+  },
+  {
+    nombre: "Participación en resultados de asociados",
+    monto: PartenResul,
+    monto2: PartenResul2,
+    vabsoluta: PartenResul - PartenResul2,
+    vrelativa: ((PartenResul / PartenResul2) - 1) * 100
+  },
+  {
+    nombre: "Utilidad antes de impuestos",
+    monto: utilidadAntesDeImpuestos,
+    monto2: utilidadAntesDeImpuestos2,
+    vabsoluta: utilidadAntesDeImpuestos - utilidadAntesDeImpuestos2,
+    vrelativa: ((utilidadAntesDeImpuestos / utilidadAntesDeImpuestos2) - 1) * 100
+  },
+  {
+    nombre: "Impuestos a la utilidad",
+    monto: ImpuestosUT,
+    monto2: ImpuestosUT2,
+    vabsoluta: ImpuestosUT - ImpuestosUT2,
+    vrelativa: ((ImpuestosUT / ImpuestosUT2) - 1) * 100
+  },
+  {
+    nombre: "Utilidad neta consolidada",
+    monto: utilidadNeta,
+    monto2: utilidadNeta2,
+    vabsoluta: utilidadNeta - utilidadNeta2,
+    vrelativa: ((utilidadNeta / utilidadNeta2) - 1) * 100
+  }
 ];
+
  
 };
 

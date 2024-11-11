@@ -817,9 +817,9 @@ const generatePDF = () => {
 
 // Formato de moneda
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat("es-ES", {
+  return new Intl.NumberFormat("es-MX", {
     style: "currency",
-    currency: "USD",
+    currency: "MXN",
   }).format(value);
 };
 const formatCurrency2 = (value) => {
