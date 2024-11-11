@@ -2,60 +2,54 @@
   <div>
     <!-- Barra de herramientas -->
     <q-toolbar
-      style="
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #cee5ef;
-      "
+      style="display: inline-flex; align-items: center; justify-content: center; background-color: #cee5ef;"
     >
       <q-icon
         class="change-color"
         name="arrow_circle_left"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
         @click="regresar"
       />
       <q-label
-        style="
-          font-size: 40px;
-          color: #0b3668;
-          text-align: left;
-          margin-left: 5px;
-        "
-        >Regresar</q-label
+        style="font-size: 40px; color: #0b3668; text-align: left; margin-left: 5px;"
       >
+        Regresar
+      </q-label>
       <q-toolbar-title class="tituloBG" style="font-size: 40px">
         Balance General
       </q-toolbar-title>
       <q-icon
         name="account_circle"
-        style="
-          font-size: 50px;
-          margin-left: 15px;
-          margin-top: 6px;
-          color: #0b3668;
-        "
+        style="font-size: 50px; margin-left: 15px; margin-top: 6px; color: #0b3668;"
       />
     </q-toolbar>
 
-    <!-- Card principal -->
+    <!-- Selector de Año y Botón PDF en la misma fila -->
     <q-card class="principalCard">
-      <!-- Selector de Año -->
       <q-card-section>
-        <q-select
-          v-model="selectedYear"
-          :options="years"
-          label="Seleccione el Año"
-          class="AnioPicker"
-          outlined
-          dense
-        />
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <q-select
+            v-model="selectedYear"
+            :options="years"
+            label="Seleccione el Año"
+            class="AnioPicker"
+            outlined
+            dense
+            style="flex-grow: 1; margin-right: 10px;"
+          />
+          <q-btn
+            color="primary"
+            label="Generar PDF"
+            @click="generatePDF"
+            icon="picture_as_pdf"
+            style="flex-shrink: 0;"
+          />
+        </div>
       </q-card-section>
+    </q-card>
+
+    <!-- Contenido de Sigma Alimentos (incluye tablas y datos) -->
+    <q-card class="principalCard print-section">
       <h5 style="margin-left: 5%; margin-bottom: 0%">
         Sigma Alimentos S.A. de C.V y Subsidiarias<br />(Subsidiaria de Alfa,
         S.A.B. de C.V.)
@@ -64,8 +58,7 @@
         Estados Consolidados de Situacion Financiera
       </h3>
       <h6 style="margin-left: 5%; margin-top: 2%">
-        Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos
-        mexicanos
+        Al 31 de diciembre de {{ selectedYear }}<br />En miles de pesos mexicanos
       </h6>
 
       <!-- Tablas para Activos, Pasivos y Patrimonio -->
@@ -133,20 +126,12 @@
           hide-bottom
         />
       </q-card-section>
-      <!-- Botón para Generar PDF -->
-      <q-card-section class="generarpdf">
-        <q-btn
-          color="primary"
-          label="Generar PDF"
-          @click="generatePDF"
-          icon="picture_as_pdf"
-        />
-      </q-card-section>
     </q-card>
   </div>
 </template>
 
 <script setup>
+
 import { useRouter } from "vue-router";
 import { ref, onMounted, watch } from "vue";
 import { jsPDF } from "jspdf";
@@ -386,59 +371,6 @@ const cargarDatosDesdeDB = async () => {
   }
 };
 
-// Método para generar PDF
-const generatePDF = () => {
-  const doc = new jsPDF();
-  doc.text(`Balance General - Año ${selectedYear.value}`, 10, 10);
-
-  // Variables para controlar la posición vertical en el PDF
-  let yPosition = 20;
-
-  // Activos
-  doc.text("Activos:", 10, yPosition);
-  yPosition += 10;
-  activos.value.forEach((activo) => {
-    doc.text(
-      `${activo.nombre}: ${formatCurrency(activo.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Espacio entre secciones
-  yPosition += 10;
-
-  // Pasivos
-  doc.text("Pasivos:", 10, yPosition);
-  yPosition += 10;
-  pasivos.value.forEach((pasivo) => {
-    doc.text(
-      `${pasivo.nombre}: ${formatCurrency(pasivo.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Espacio entre secciones
-  yPosition += 10;
-
-  // Patrimonio
-  doc.text("Patrimonio:", 10, yPosition);
-  yPosition += 10;
-  patrimonios.value.forEach((patrimonio) => {
-    doc.text(
-      `${patrimonio.nombre}: ${formatCurrency(patrimonio.valor)}`,
-      10,
-      yPosition
-    );
-    yPosition += 10;
-  });
-
-  // Guardar PDF
-  doc.save(`Balance_General_${selectedYear.value}.pdf`);
-};
 
 // Formato de moneda
 const formatCurrency = (value) => {
@@ -454,9 +386,15 @@ onMounted(() => {
 watch(selectedYear, () => {
   cargarDatosDesdeDB();
 });
+
+// Función para generar el PDF
+const generatePDF = () => {
+  window.print();
+};
 </script>
 
 <style scoped>
+/* Mantén los estilos existentes o ajusta según sea necesario */
 .custom-header-class {
   background-color: #0b3668;
   color: #ffffff;
@@ -482,9 +420,23 @@ watch(selectedYear, () => {
   margin-top: 0%;
   margin-bottom: 0%;
 }
-.generarpdf {
-  margin: 0 auto;
-  width: 30%;
-  margin-top: 2%;
+
+/* Estilos para impresión */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-section, .print-section * {
+    visibility: visible;
+  }
+  .no-print {
+    display: none;
+  }
+  .print-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 </style>
