@@ -154,9 +154,15 @@
             <q-card-section style="text-align: center">
               <q-btn
                 class="botoncerrar efect"
+                label="Limpiar"
+                style="padding-left: 20px; padding-right: 20px;"
+                @click="LimpiarRSA"
+              />
+              <q-btn
+                class="botoncerrar efect"
                 label="Calcular"
-                style="padding-left: 20px; padding-right: 20px"
-                @click="agregar"
+                style="padding-left: 20px; padding-right: 20px; margin-left: 10px"
+                @click="CalcularRSA"
               />
             </q-card-section>
           </q-card>
@@ -229,9 +235,15 @@
             <q-card-section style="text-align: center">
               <q-btn
                 class="botoncerrar efect"
-                label="Calcular"
+                label="Limpiar"
                 style="padding-left: 20px; padding-right: 20px"
-                @click="agregar"
+                @click="LimpiarRSE"
+              />
+              <q-btn
+                class="botoncerrar efect"
+                label="Calcular"
+                style="padding-left: 20px; padding-right: 20px; margin-left: 10px"
+                @click="CalcularRSE"
               />
             </q-card-section>
           </q-card>
@@ -257,10 +269,12 @@ const Estados = ref({ name: "" });
 const anioSeleccionado = ref("");
 const datosRSA = ref({ tipo: "", subtipo: "", nombrec: "", monto: "" });
 const datosRSE = ref({ tipo: "", subtipo: "", nombrec: "", monto: "" });
-
+const campo1 = ref('');
+const campo2 = ref('');
+const campo3 = ref('');
 const estados = ["Simplificado", "No Simplificado"];
 const showAnio = ref(false);
-const anosDisponibles = ["2019", "2020", "2021", "2022"];
+const anosDisponibles = ["2019", "2020", "2021", "2022","2023"];
 
 const cargarDatos = () => {
   const botonCargarDatos = document.getElementById("boton-cargar-datos");
@@ -272,6 +286,8 @@ const cargarDatos = () => {
       gpac: selectedData.gpac,
       activoTotal: selectedData.activoTotal,
       anio: selectedData.anio,
+      capital: selectedData.capital,
+      ventas: selectedData.ventas
     };
 
     dupontDB
@@ -321,9 +337,46 @@ const buscarYCalcular = async () => {
         const doc = docEncontrado.doc;
         datosRSA.value.tipo = doc.gpac || 0;
         datosRSA.value.subtipo = doc.ventas || 0;
-        datosRSA.value.nombrec = doc.activoTotal || "";
+        datosRSA.value.nombrec = doc.activoTotal || 0;
         const total = doc.gpac / doc.activoTotal;
-        datosRSA.value.monto = total;
+        datosRSA.value.monto = total.toFixed(2);
+
+        datosRSE.value.tipo = doc.gpac || 0;
+        datosRSE.value.subtipo = doc.activoTotal || 0;
+        datosRSE.value.nombrec = doc.capital || 0;
+        const totalrse = doc.gpac / doc.capital;
+        datosRSE.value.monto = totalrse.toFixed(2);
+      } else {
+        console.log(
+          "No se encontró ningún documento para el año seleccionado."
+        );
+      }
+    } catch (error) {
+      console.error("Error al buscar el documento:", error);
+    }
+  } else {
+    try {
+      // Obtener todos los documentos
+      const resultado = await dupontDB.allDocs({ include_docs: true });
+
+      // Filtrar el documento por el año seleccionado
+      const docEncontrado = resultado.rows.find(
+        (row) => row.doc.anio === anioSeleccionado.value // Usar .value para acceder al valor real
+      );
+
+      if (docEncontrado) {
+        const doc = docEncontrado.doc;
+        datosRSA.value.tipo = doc.gpac || 0;
+        datosRSA.value.subtipo = doc.ventas || 0;
+        datosRSA.value.nombrec = doc.activoTotal || "";
+        const total = (doc.gpac / doc.ventas) * (doc.ventas / doc.activoTotal);
+        datosRSA.value.monto = total.toFixed(2);
+
+        datosRSE.value.tipo = doc.gpac || 0;
+        datosRSE.value.subtipo = doc.activoTotal || 0;
+        datosRSE.value.nombrec = doc.capital || 0;
+        const totalrse = (doc.gpac / doc.activoTotal) * (doc.activoTotal / doc.activoTotal);
+        datosRSE.value.monto = totalrse.toFixed(2);
       } else {
         console.log(
           "No se encontró ningún documento para el año seleccionado."
@@ -334,4 +387,40 @@ const buscarYCalcular = async () => {
     }
   }
 };
+const CalcularRSA = () => {
+  // Ejemplo de cálculo: suma de los ingresos
+  if (Estados.value.name === "Simplificado") {
+datosRSA.value.monto = (parseFloat(datosRSA.value.tipo) / parseFloat(datosRSA.value.nombrec)).toFixed(2); ;
+
+}else if (Estados.value.name === "No Simplificado"){
+  datosRSA.value.monto = ((parseFloat(datosRSA.value.tipo) / parseFloat(datosRSA.value.subtipo))*(parseFloat(datosRSA.value.subtipo) / parseFloat(datosRSA.value.nombrec)) ).toFixed(2);;
+}else{
+  datosRSA.value.monto = (parseFloat(datosRSA.value.tipo) / parseFloat(datosRSA.value.nombrec)).toFixed(2); ;
+};
+}
+const CalcularRSE = () => {
+  // Ejemplo de cálculo: suma de los ingresos
+  if (Estados.value.name === "Simplificado") {
+
+datosRSE.value.monto = (parseFloat(datosRSE.value.tipo) / parseFloat(datosRSE.value.nombrec)).toFixed(2); ;
+}else if (Estados.value.name === "No Simplificado"){
+  datosRSE.value.monto = ((parseFloat(datosRSE.value.tipo) / parseFloat(datosRSE.value.subtipo))*(parseFloat(datosRSE.value.subtipo) / parseFloat(datosRSE.value.nombrec))).toFixed(2); ;
+}else{
+  datosRSE.value.monto = (parseFloat(datosRSE.value.tipo) / parseFloat(datosRSE.value.nombrec)).toFixed(2); ;
+};
+}
+const LimpiarRSA = () => {
+  datosRSA.value.tipo="";
+  datosRSA.value.subtipo="";
+  datosRSA.value.nombrec="";
+  datosRSA.value.monto="";
+  
+}
+const LimpiarRSE = () => {
+  datosRSE.value.tipo="";
+  datosRSE.value.subtipo="";
+  datosRSE.value.nombrec="";
+  datosRSE.value.monto="";
+  
+}
 </script>

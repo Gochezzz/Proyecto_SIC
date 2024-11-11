@@ -2,16 +2,36 @@
   {
     "gpac": 3551848,
     "activoTotal": 98928933,
-    "anio": "2019"
+    "anio": "2019",
+    "ventas": 124497945,
+    "capital": 17200511
   },
   {
     "gpac": 4991951,
     "activoTotal": 109871559,
-    "anio": "2020"
+    "anio": "2020",
+    "ventas": 135982954,
+    "capital": 23304185
   },
   {
     "gpac": 1142594,
     "activoTotal": 110614699,
-    "anio": "2021"
+    "anio": "2021",
+    "ventas": 138313803,
+    "capital": 20932967
+  },
+  {
+    "gpac": 2001712,
+    "activoTotal": 110614699,
+    "anio": "2022",
+    "ventas": 105052573,
+    "capital": 17922149
+  },
+  {
+    "gpac": -1156073,
+    "activoTotal": 96984075,
+    "anio": "2023",
+    "ventas": 150837832,
+    "capital": 16153654
   }
 ]
