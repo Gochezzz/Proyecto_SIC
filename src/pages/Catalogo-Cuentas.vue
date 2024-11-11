@@ -145,19 +145,50 @@
     };
     async function cargarinfoBG() {
         try {
-            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+            // Verifica que SIGMABG sea un arreglo válido
+            if (!Array.isArray(catalogoBGJ)) {
+                throw new Error("SIGMABG no es un arreglo válido.");
+            }
+
+            // Verifica que cuentasBG esté correctamente inicializado
+            if (!catalogoBG || typeof catalogoBG.put !== 'function') {
+                throw new Error("cuentasBG no está correctamente inicializado.");
+            }
+
             // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
             for (const cuenta of catalogoBGJ) {
-            await catalogoBG.put({
-                _id: uniqueId,
-                tipo: cuenta.tipo,
-                subtipo: cuenta.subtipo,
-                nombre: cuenta.nombre,
-            });
+                // Verifica que los campos necesarios existan en cada cuenta,
+                // permitiendo que monto sea 0.
+                if (!cuenta.tipo || !cuenta.subtipo || !cuenta.nombre) {
+                    throw new Error(`Datos incompletos en la cuenta: ${JSON.stringify(cuenta)}`);
+                }
+
+                // Genera un ID único
+                const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+
+                await catalogoBG.put({
+                    _id: uniqueId,  // ID único
+                    tipo: cuenta.tipo,
+                    subtipo: cuenta.subtipo,
+                    nombre: cuenta.nombre,
+                });
             }
+
+            // Deshabilita el botón y guarda el estado en localStorage
             botonDeshabilitadoBG.value = true;
-            localStorage.setItem("botonDeshabilitadoBG", "true");
-            await cargarDatos();
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem("botonDeshabilitadoBG", "true");
+            } else {
+                console.error("localStorage no está disponible.");
+            }
+
+            // Llama a la función cargarDatos y maneja posibles errores
+            if (typeof cargarDatos === 'function') {
+                await cargarDatos();
+            } else {
+                console.error("cargarDatos no está definida.");
+            }
+
             console.log("Catálogo BG cargado en PouchDB.");
         } catch (error) {
             console.error("Error al cargar el catálogo en PouchDB:", error);
@@ -165,24 +196,55 @@
     }
     async function cargarinfoER() {
         try {
-            const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+            // Verifica que SIGMABG sea un arreglo válido
+            if (!Array.isArray(catalogoERJ)) {
+                throw new Error("SIGMABG no es un arreglo válido.");
+            }
+
+            // Verifica que cuentasBG esté correctamente inicializado
+            if (!catalogoER || typeof catalogoER.put !== 'function') {
+                throw new Error("cuentasBG no está correctamente inicializado.");
+            }
+
             // Itera sobre los datos del archivo JSON y guárdalos en catalogodb
             for (const cuenta of catalogoERJ) {
-            await catalogoER.put({
-                _id: uniqueId,
-                tipo: cuenta.tipo,
-                nombre: cuenta.nombre,
-            });
+                // Verifica que los campos necesarios existan en cada cuenta,
+                // permitiendo que monto sea 0.
+                if (!cuenta.tipo || !cuenta.nombre) {
+                    throw new Error(`Datos incompletos en la cuenta: ${JSON.stringify(cuenta)}`);
+                }
+
+                // Genera un ID único
+                const uniqueId = `${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`;
+
+                await catalogoER.put({
+                    _id: uniqueId,  // ID único
+                    tipo: cuenta.tipo,
+                    subtipo: "",
+                    nombre: cuenta.nombre,
+                });
             }
+
+            // Deshabilita el botón y guarda el estado en localStorage
             botonDeshabilitadoER.value = true;
-            localStorage.setItem("botonDeshabilitadoER", "true");
-            await cargarDatos();
-            console.log("Catálogo ER cargado en PouchDB.");
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem("botonDeshabilitadoER", "true");
+            } else {
+                console.error("localStorage no está disponible.");
+            }
+
+            // Llama a la función cargarDatos y maneja posibles errores
+            if (typeof cargarDatos === 'function') {
+                await cargarDatos();
+            } else {
+                console.error("cargarDatos no está definida.");
+            }
+
+            console.log("Catálogo BG cargado en PouchDB.");
         } catch (error) {
             console.error("Error al cargar el catálogo en PouchDB:", error);
         }
     }
-
     const router = useRouter();
 
     const MostrarDrawer = ref(false);
