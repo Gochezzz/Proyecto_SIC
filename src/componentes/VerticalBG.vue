@@ -1,13 +1,13 @@
 <template>
       <!-- Card principal -->
-      <q-card class="principalCard" style="margin-bottom: 30px;">
+      <q-card class="principalCard print-section" style="margin-bottom: 30px;">
         <!-- Selector de Año -->
         <q-card-section>
           <q-select
             v-model="selectedYear"
             :options="years"
             label="Seleccione el Año"
-            class="AnioPicker"
+            class="AnioPicker no-print"
             outlined
             dense
           />
@@ -89,44 +89,18 @@
             hide-bottom
           />
         </q-card-section>
-        <!-- Botón para Generar PDF -->
-        <q-card-section class="generarpdf">
-          <q-btn
-            color="primary"
-            label="Generar PDF"
-            @click="generatePDF"
-            icon="picture_as_pdf"
-          />
-        </q-card-section>
       </q-card>
   </template>
   
   <script setup>
-  import { useRouter } from "vue-router";
   import { ref, onMounted, watch, computed } from "vue";
-  import { cuentasBG, catalogoBG } from "../boot/Pouchdb";
-  
-  const router = useRouter();
-  
-  const regresar = () => {
-    router.push("/reportes");
-  };
+  import { cuentasBG } from "../boot/Pouchdb";
   
   const selectedYear = ref();
   const years = Array.from(
     { length: 10 },
     (_, i) => new Date().getFullYear() - i
   );
-  // Métodos para manejar el clic en los botones
-  const analisisBalanceGeneral = () => {
-    mostrarBG.value = true;
-    mostrarER.value = false;
-  };
-  
-  const analisisEstadoResultados = () => {
-    mostrarER.value = true;
-    mostrarBG.value = false;
-  };
   const activosCorrientes = ref([]);
   const activosNCorrientes = ref([]);
   const pasivosCorrientes = ref([]);
@@ -452,6 +426,23 @@
   </script>
   
   <style scoped>
+   @media print {
+    body * {
+      visibility: hidden;
+    }
+    .print-section, .print-section * {
+      visibility: visible;
+    }
+    .no-print {
+      display: none;
+    }
+    .print-section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
   .custom-header-class {
     background-color: #0b3668;
     color: #ffffff;

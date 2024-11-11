@@ -6,7 +6,7 @@
             v-model="selectedYear"
             :options="years"
             label="Seleccione el Año"
-            class="AnioPicker"
+            class="AnioPicker no-print"
             outlined
             dense
           />
@@ -215,10 +215,6 @@
   // Cargar datos iniciales al montar el componente
   onMounted(loadData);
   
-  // Función para abrir el diálogo de impresión
-  const generatePDF = () => {
-    window.print();
-  };
   watch(
     [selectedYear],
     () => {
