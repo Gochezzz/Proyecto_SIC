@@ -42,7 +42,7 @@
       <!-- Tabla de datos -->
       <q-card-section class="tablasBG">
         <q-table
-          :rows="filteredData"
+          :rows="tableData"
           :columns="columns"
           flat
           dense
@@ -56,18 +56,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import { jsPDF } from "jspdf";
+import { cuentasER } from "../boot/Pouchdb"; // Usamos la base de datos cuentasER
 
 const router = useRouter();
-const regresar = () => router.push("/reportes");
+
+const regresar = () => {
+  router.push("/reportes");
+};
 
 // Variables reactivas
 const selectedYear = ref(new Date().getFullYear());
 const years = [2023, 2022, 2021, 2020, 2019];
 
-const data = ref([]); // Contendrá todos los datos del JSON
-const filteredData = ref([]); // Contendrá los datos filtrados por año
+const data = ref([]); // Contendrá todos los datos del estado de resultados
+const tableData = ref([]); // Contendrá los datos filtrados y calculados
 
 // Columnas de la tabla
 const columns = [
@@ -83,25 +88,59 @@ const formatCurrency = value => {
   }).format(value);
 };
 
-// Cargar datos del JSON al montar el componente
+// Cargar datos desde la base de datos (cuentasER)
 const loadData = async () => {
   try {
-    const response = await fetch("/src/assets/ERSIGMA.json");
-    const jsonData = await response.json();
-    data.value = jsonData;
+    const cuentas = await cuentasER.allDocs({ include_docs: true });
+    data.value = cuentas.rows.map(row => row.doc);
 
-    // Filtrar datos para el año seleccionado
+    // Filtrar y procesar datos para el año seleccionado
     filterDataByYear();
   } catch (error) {
     console.error("Error al cargar datos:", error);
   }
 };
 
-// Filtrar los datos según el año seleccionado
+// Filtrar y procesar los datos según el año seleccionado
 const filterDataByYear = () => {
-  filteredData.value = data.value.filter(
-    item => item.fecha.startsWith(selectedYear.value.toString())
+  const filteredData = data.value.filter(
+    item => new Date(item.fecha).getFullYear() === selectedYear.value
   );
+
+  // Calcular los valores de ingresos, costos, gastos e impuestos
+  let totalIngresos = 0;
+  let totalCostos = 0;
+  let totalGastos = 0;
+  let totalImpuestos = 0;
+
+  filteredData.forEach(item => {
+    if (item.tipo === "Ingreso") {
+      totalIngresos += item.monto;
+    } else if (item.tipo === "Costo") {
+      totalCostos += item.monto;
+    } else if (item.tipo === "Gasto") {
+      totalGastos += item.monto;
+    } else if (item.tipo === "Impuesto") {
+      totalImpuestos += item.monto;
+    }
+  });
+
+  // Calcular utilidades
+  const utilidadBruta = totalIngresos - totalCostos;
+  const utilidadOperativa = utilidadBruta - totalGastos;
+  const utilidadNeta = utilidadOperativa - totalImpuestos;
+
+  // Crear datos para mostrar en la tabla
+  tableData.value = [
+    ...filteredData,
+    { nombre: "Total Ingresos", monto: totalIngresos },
+    { nombre: "Total Costos", monto: totalCostos },
+    { nombre: "Utilidad Bruta", monto: utilidadBruta },
+    { nombre: "Total Gastos", monto: totalGastos },
+    { nombre: "Total Impuestos", monto: totalImpuestos },
+    { nombre: "Utilidad Operativa", monto: utilidadOperativa },
+    { nombre: "Utilidad Neta", monto: utilidadNeta },
+  ];
 };
 
 // Cargar datos iniciales al montar el componente
