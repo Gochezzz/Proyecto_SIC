@@ -30,7 +30,7 @@
         >Regresar</q-label
       >
       <q-toolbar-title class="tituloBG" style="font-size: 40px">
-        Balance General
+        Analisis Horizontal
       </q-toolbar-title>
       <q-icon
         name="account_circle"
@@ -42,9 +42,22 @@
         "
       />
     </q-toolbar>
-
+    <div class="center-container">
+      <q-btn
+        label="Análisis Horizontal de Balance General"
+        color="primary"
+        class="button"
+        @click="analisisBalanceGeneral"
+      />
+      <q-btn
+        label="Análisis Horizontal del Estado de Resultados"
+        color="secondary"
+        class="button"
+        @click="analisisEstadoResultados"
+      />
+    </div>
     <!-- Card principal -->
-    <q-card class="principalCard">
+    <q-card class="principalCard" v-if="mostrarBG">
       <!-- Selector de Año -->
       <q-card-section>
         <q-select
@@ -151,6 +164,7 @@
         />
       </q-card-section>
     </q-card>
+    <HorizontalER v-if="mostrarER" />
   </div>
 </template>
 
@@ -159,6 +173,7 @@ import { useRouter } from "vue-router";
 import { ref, onMounted, watch, computed } from "vue";
 import { jsPDF } from "jspdf";
 import { cuentasBG, catalogoBG } from "../boot/Pouchdb";
+import HorizontalER from "src/componentes/HorizontalER.vue";
 
 const router = useRouter();
 
@@ -167,12 +182,25 @@ const regresar = () => {
 };
 
 // Variables reactivas
+const mostrarBG = ref(false);
+const mostrarER = ref(false);
+
 const selectedYear = ref();
 const selectedYear2 = ref();
 const years = Array.from(
   { length: 10 },
   (_, i) => new Date().getFullYear() - i
 );
+// Métodos para manejar el clic en los botones
+const analisisBalanceGeneral = () => {
+  mostrarBG.value = true;
+  mostrarER.value = false;
+};
+
+const analisisEstadoResultados = () => {
+  mostrarER.value = true;
+  mostrarBG.value = false;
+};
 const activosCorrientes = ref([]);
 const activosNCorrientes = ref([]);
 const pasivosCorrientes = ref([]);
@@ -181,34 +209,44 @@ const patrimonios = ref([]);
 
 // Computed para las columnas de activos corrientes
 const columnsAC = computed(() => [
-  { name: "nombre", label: "Activo Corriente", align: "left", field: "nombre", style:"width:300px"},
+  {
+    name: "nombre",
+    label: "Activo Corriente",
+    align: "left",
+    field: "nombre",
+    style: "width:300px",
+  },
   {
     name: "valor",
-    label: "Año "+(selectedYear.value != null ? selectedYear.value :"Actual"),  // Año seleccionado dinámicamente
+    label:
+      "Año " + (selectedYear.value != null ? selectedYear.value : "Actual"), // Año seleccionado dinámicamente
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor2",
-    label: "Año "+(selectedYear2.value != null ? selectedYear2.value :"Anterior"), // Año 2 seleccionado dinámicamente
+    label:
+      "Año " + (selectedYear2.value != null ? selectedYear2.value : "Anterior"), // Año 2 seleccionado dinámicamente
     align: "right",
     field: (row) => (row.valor2 != null ? formatCurrency(row.valor2) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor",
-    label: "Variacion Absoluta",  // Año seleccionado dinámicamente
+    label: "Variacion Absoluta", // Año seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A",
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "Variacion Relativa", // Año 2 seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vRelativa != null ? formatCurrency2(row.vRelativa): "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vRelativa != null ? formatCurrency2(row.vRelativa) : "N/A",
+    style: "width:125px",
   },
 ]);
 const columnsANC = [
@@ -217,35 +255,37 @@ const columnsANC = [
     label: "Activo No Corriente",
     align: "left",
     field: "nombre",
-    style:"width:300px"
+    style: "width:300px",
   },
   {
     name: "valor",
     label: "",
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "",
     align: "right",
     field: (row) => (row.valor2 != null ? formatCurrency(row.valor2) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor",
-    label: "",  // Año seleccionado dinámicamente
+    label: "", // Año seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A",
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "", // Año 2 seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vRelativa != null ? formatCurrency2(row.vRelativa): "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vRelativa != null ? formatCurrency2(row.vRelativa) : "N/A",
+    style: "width:125px",
   },
 ];
 const columnsPC = [
@@ -254,35 +294,37 @@ const columnsPC = [
     label: "Pasivo Corriente",
     align: "left",
     field: "nombre",
-    style:"width:300px"
+    style: "width:300px",
   },
   {
     name: "valor",
     label: "",
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "",
     align: "right",
     field: (row) => (row.valor2 != null ? formatCurrency(row.valor2) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor",
-    label: "",  // Año seleccionado dinámicamente
+    label: "", // Año seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A",
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "", // Año 2 seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vRelativa != null ? formatCurrency2(row.vRelativa): "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vRelativa != null ? formatCurrency2(row.vRelativa) : "N/A",
+    style: "width:125px",
   },
 ];
 const columnsPNC = [
@@ -291,35 +333,37 @@ const columnsPNC = [
     label: "Pasivo No Corriente",
     align: "left",
     field: "nombre",
-    style:"width:300px"
+    style: "width:300px",
   },
   {
     name: "valor",
     label: "",
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "",
     align: "right",
     field: (row) => (row.valor2 != null ? formatCurrency(row.valor2) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor",
-    label: "",  // Año seleccionado dinámicamente
+    label: "", // Año seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A",
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "", // Año 2 seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vRelativa != null ? formatCurrency2(row.vRelativa): "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vRelativa != null ? formatCurrency2(row.vRelativa) : "N/A",
+    style: "width:125px",
   },
 ];
 const columnsP = [
@@ -328,35 +372,37 @@ const columnsP = [
     label: "Capital Contable",
     align: "left",
     field: "nombre",
-    style:"width:300px"
+    style: "width:300px",
   },
   {
     name: "valor",
     label: "",
     align: "right",
     field: (row) => (row.valor != null ? formatCurrency(row.valor) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "",
     align: "right",
     field: (row) => (row.valor2 != null ? formatCurrency(row.valor2) : "N/A"),
-    style:"width:125px"
+    style: "width:125px",
   },
   {
     name: "valor",
-    label: "",  // Año seleccionado dinámicamente
+    label: "", // Año seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vAbsoluta != null ? formatCurrency(row.vAbsoluta) : "N/A",
+    style: "width:125px",
   },
   {
     name: "valor2",
     label: "", // Año 2 seleccionado dinámicamente
     align: "right",
-    field: (row) => (row.vRelativa != null ? formatCurrency2(row.vRelativa): "N/A"),
-    style:"width:125px"
+    field: (row) =>
+      row.vRelativa != null ? formatCurrency2(row.vRelativa) : "N/A",
+    style: "width:125px",
   },
 ];
 //cargar datos
@@ -373,13 +419,12 @@ const cargarDatosDesdeDB = async () => {
     let pasivosCorrientesMap = {};
     let pasivosNCorrientesMap = {};
     let patrimoniosMap = {};
-     // Inicializar objetos intermedios para acumular montos
+    // Inicializar objetos intermedios para acumular montos
     let activosCorrientesMap2 = {};
     let activosNCorrientesMap2 = {};
     let pasivosCorrientesMap2 = {};
     let pasivosNCorrientesMap2 = {};
     let patrimoniosMap2 = {};
-
 
     // Recorrer las cuentas y organizarlas por año
     cuentas.rows.forEach((row) => {
@@ -426,7 +471,6 @@ const cargarDatosDesdeDB = async () => {
           }
           patrimoniosMap[cuenta.nombre] += parseFloat(cuenta.monto) || 0;
         }
-        
       }
 
       if (anio === selectedYear2.value) {
@@ -440,7 +484,8 @@ const cargarDatosDesdeDB = async () => {
           if (!activosNCorrientesMap2[cuenta.nombre]) {
             activosNCorrientesMap2[cuenta.nombre] = 0;
           }
-          activosNCorrientesMap2[cuenta.nombre] += parseFloat(cuenta.monto) || 0;
+          activosNCorrientesMap2[cuenta.nombre] +=
+            parseFloat(cuenta.monto) || 0;
         }
         if (cuenta.tipo === "Pasivo" && cuenta.subtipo === "Corriente") {
           if (!pasivosCorrientesMap2[cuenta.nombre]) {
@@ -452,7 +497,8 @@ const cargarDatosDesdeDB = async () => {
           if (!pasivosNCorrientesMap2[cuenta.nombre]) {
             pasivosNCorrientesMap2[cuenta.nombre] = 0;
           }
-          pasivosNCorrientesMap2[cuenta.nombre] += parseFloat(cuenta.monto) || 0;
+          pasivosNCorrientesMap2[cuenta.nombre] +=
+            parseFloat(cuenta.monto) || 0;
         }
         if (cuenta.tipo === "Capital") {
           if (!patrimoniosMap2[cuenta.nombre]) {
@@ -464,83 +510,116 @@ const cargarDatosDesdeDB = async () => {
     });
 
     // Combina los datos de ambos años para cada cuenta
-    activosCorrientes.value = Object.entries(activosCorrientesMap).map(([nombre, valor]) => {
-      // Busca el valor del segundo año (valor2) para la misma cuenta
-      const valor2 = activosCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
+    activosCorrientes.value = Object.entries(activosCorrientesMap).map(
+      ([nombre, valor]) => {
+        // Busca el valor del segundo año (valor2) para la misma cuenta
+        const valor2 = activosCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
 
-      return {
-        nombre,
-        valor,
-        valor2,
-        vAbsoluta:(valor - valor2).toFixed(2),
-        vRelativa: valor2 !== 0 && valor !== 0 ? ((valor/valor2) -1)*100 : 0,
-      };
-    });
-    activosNCorrientes.value = Object.entries(activosNCorrientesMap).map(([nombre, valor]) => {
-      // Busca el valor del segundo año (valor2) para la misma cuenta
-      const valor2 = activosNCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
+        return {
+          nombre,
+          valor,
+          valor2,
+          vAbsoluta: (valor - valor2).toFixed(2),
+          vRelativa:
+            valor2 !== 0 && valor !== 0 ? (valor / valor2 - 1) * 100 : 0,
+        };
+      }
+    );
+    activosNCorrientes.value = Object.entries(activosNCorrientesMap).map(
+      ([nombre, valor]) => {
+        // Busca el valor del segundo año (valor2) para la misma cuenta
+        const valor2 = activosNCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
 
-      return {
-        nombre,
-        valor,
-        valor2,
-        vAbsoluta:(valor - valor2).toFixed(2),
-        vRelativa: valor2 !== 0 && valor !== 0 ? ((valor/valor2) -1)*100 : 0, 
-      };
-    });
-    pasivosCorrientes.value = Object.entries(pasivosCorrientesMap).map(([nombre, valor]) => {
-      // Busca el valor del segundo año (valor2) para la misma cuenta
-      const valor2 = pasivosCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
+        return {
+          nombre,
+          valor,
+          valor2,
+          vAbsoluta: (valor - valor2).toFixed(2),
+          vRelativa:
+            valor2 !== 0 && valor !== 0 ? (valor / valor2 - 1) * 100 : 0,
+        };
+      }
+    );
+    pasivosCorrientes.value = Object.entries(pasivosCorrientesMap).map(
+      ([nombre, valor]) => {
+        // Busca el valor del segundo año (valor2) para la misma cuenta
+        const valor2 = pasivosCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
 
-      return {
-        nombre,
-        valor,
-        valor2,
-        vAbsoluta:(valor - valor2).toFixed(2),
-        vRelativa: valor2 !== 0 && valor !== 0 ? ((valor/valor2) -1)*100 : 0,
-      };
-    });
-    pasivosNCorrientes.value = Object.entries(pasivosNCorrientesMap).map(([nombre, valor]) => {
-      // Busca el valor del segundo año (valor2) para la misma cuenta
-      const valor2 = pasivosNCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
+        return {
+          nombre,
+          valor,
+          valor2,
+          vAbsoluta: (valor - valor2).toFixed(2),
+          vRelativa:
+            valor2 !== 0 && valor !== 0 ? (valor / valor2 - 1) * 100 : 0,
+        };
+      }
+    );
+    pasivosNCorrientes.value = Object.entries(pasivosNCorrientesMap).map(
+      ([nombre, valor]) => {
+        // Busca el valor del segundo año (valor2) para la misma cuenta
+        const valor2 = pasivosNCorrientesMap2[nombre] || 0; // Si no hay valor2, asigna 0
 
-      return {
-        nombre,
-        valor,
-        valor2,
-        vAbsoluta:(valor - valor2).toFixed(2),
-        vRelativa: valor2 !== 0 && valor !== 0 ? ((valor/valor2) -1)*100 : 0,
-      };
-    });
-    patrimonios.value = Object.entries(patrimoniosMap).map(([nombre, valor]) => {
-      // Busca el valor del segundo año (valor2) para la misma cuenta
-      const valor2 = patrimoniosMap2[nombre] || 0; // Si no hay valor2, asigna 0
+        return {
+          nombre,
+          valor,
+          valor2,
+          vAbsoluta: (valor - valor2).toFixed(2),
+          vRelativa:
+            valor2 !== 0 && valor !== 0 ? (valor / valor2 - 1) * 100 : 0,
+        };
+      }
+    );
+    patrimonios.value = Object.entries(patrimoniosMap).map(
+      ([nombre, valor]) => {
+        // Busca el valor del segundo año (valor2) para la misma cuenta
+        const valor2 = patrimoniosMap2[nombre] || 0; // Si no hay valor2, asigna 0
 
-      return {
-        nombre,
-        valor,
-        valor2,
-        vAbsoluta:(valor - valor2).toFixed(2),
-        vRelativa: valor2 !== 0 && valor !== 0 ? ((valor/valor2) -1)*100 : 0,
-      };
-    });
-     // Calcular y añadir los totales
-     const sumarValores = (map) =>
+        return {
+          nombre,
+          valor,
+          valor2,
+          vAbsoluta: (valor - valor2).toFixed(2),
+          vRelativa:
+            valor2 !== 0 && valor !== 0 ? (valor / valor2 - 1) * 100 : 0,
+        };
+      }
+    );
+    // Calcular y añadir los totales
+    const sumarValores = (map) =>
       Object.values(map).reduce((acc, valor) => acc + valor, 0);
 
     activosCorrientes.value.push({
       nombre: "Total Activos Corrientes",
       valor: sumarValores(activosCorrientesMap),
       valor2: sumarValores(activosCorrientesMap2),
-      vAbsoluta:(sumarValores(activosCorrientesMap) - sumarValores(activosCorrientesMap2)),
-      vRelativa: sumarValores(activosCorrientesMap2) !== 0 && sumarValores(activosCorrientesMap) !== 0 ? ((sumarValores(activosCorrientesMap)/sumarValores(activosCorrientesMap2)) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(activosCorrientesMap) -
+        sumarValores(activosCorrientesMap2),
+      vRelativa:
+        sumarValores(activosCorrientesMap2) !== 0 &&
+        sumarValores(activosCorrientesMap) !== 0
+          ? (sumarValores(activosCorrientesMap) /
+              sumarValores(activosCorrientesMap2) -
+              1) *
+            100
+          : 0,
     });
     activosNCorrientes.value.push({
       nombre: "Total Activos No Corrientes",
       valor: sumarValores(activosNCorrientesMap),
       valor2: sumarValores(activosNCorrientesMap2),
-      vAbsoluta:(sumarValores(activosNCorrientesMap) - sumarValores(activosNCorrientesMap2)),
-      vRelativa: sumarValores(activosNCorrientesMap2) !== 0 && sumarValores(activosNCorrientesMap) !== 0 ? ((sumarValores(activosNCorrientesMap)/sumarValores(activosNCorrientesMap2)) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(activosNCorrientesMap) -
+        sumarValores(activosNCorrientesMap2),
+      vRelativa:
+        sumarValores(activosNCorrientesMap2) !== 0 &&
+        sumarValores(activosNCorrientesMap) !== 0
+          ? (sumarValores(activosNCorrientesMap) /
+              sumarValores(activosNCorrientesMap2) -
+              1) *
+            100
+          : 0,
     });
     activosNCorrientes.value.push({
       nombre: "Total Activos",
@@ -550,28 +629,57 @@ const cargarDatosDesdeDB = async () => {
       valor2:
         sumarValores(activosNCorrientesMap2) +
         sumarValores(activosCorrientesMap2),
-      vAbsoluta:((sumarValores(activosNCorrientesMap) +
-      sumarValores(activosCorrientesMap)) - (sumarValores(activosNCorrientesMap2) +
-      sumarValores(activosCorrientesMap2))),
-      vRelativa: (sumarValores(activosNCorrientesMap2) +
-      sumarValores(activosCorrientesMap2)) !== 0 && (sumarValores(activosNCorrientesMap) +
-      sumarValores(activosCorrientesMap)) !== 0 ? (((sumarValores(activosNCorrientesMap) +
-      sumarValores(activosCorrientesMap))/(sumarValores(activosNCorrientesMap2) +
-      sumarValores(activosCorrientesMap2))) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(activosNCorrientesMap) +
+        sumarValores(activosCorrientesMap) -
+        (sumarValores(activosNCorrientesMap2) +
+          sumarValores(activosCorrientesMap2)),
+      vRelativa:
+        sumarValores(activosNCorrientesMap2) +
+          sumarValores(activosCorrientesMap2) !==
+          0 &&
+        sumarValores(activosNCorrientesMap) +
+          sumarValores(activosCorrientesMap) !==
+          0
+          ? ((sumarValores(activosNCorrientesMap) +
+              sumarValores(activosCorrientesMap)) /
+              (sumarValores(activosNCorrientesMap2) +
+                sumarValores(activosCorrientesMap2)) -
+              1) *
+            100
+          : 0,
     });
     pasivosCorrientes.value.push({
       nombre: "Total Pasivos Corrientes",
       valor: sumarValores(pasivosCorrientesMap),
       valor2: sumarValores(pasivosCorrientesMap2),
-      vAbsoluta:( sumarValores(pasivosCorrientesMap) - sumarValores(pasivosCorrientesMap2)),
-      vRelativa: sumarValores(pasivosCorrientesMap2) !== 0 &&  sumarValores(pasivosCorrientesMap) !== 0 ? (( sumarValores(pasivosCorrientesMap)/sumarValores(pasivosCorrientesMap2)) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(pasivosCorrientesMap) -
+        sumarValores(pasivosCorrientesMap2),
+      vRelativa:
+        sumarValores(pasivosCorrientesMap2) !== 0 &&
+        sumarValores(pasivosCorrientesMap) !== 0
+          ? (sumarValores(pasivosCorrientesMap) /
+              sumarValores(pasivosCorrientesMap2) -
+              1) *
+            100
+          : 0,
     });
     pasivosNCorrientes.value.push({
       nombre: "Total Pasivos No Corrientes",
       valor: sumarValores(pasivosNCorrientesMap),
       valor2: sumarValores(pasivosNCorrientesMap2),
-      vAbsoluta:(sumarValores(pasivosNCorrientesMap) - sumarValores(pasivosNCorrientesMap2)),
-      vRelativa: sumarValores(pasivosNCorrientesMap2) !== 0 && sumarValores(pasivosNCorrientesMap) !== 0 ? ((sumarValores(pasivosNCorrientesMap)/sumarValores(pasivosNCorrientesMap2)) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(pasivosNCorrientesMap) -
+        sumarValores(pasivosNCorrientesMap2),
+      vRelativa:
+        sumarValores(pasivosNCorrientesMap2) !== 0 &&
+        sumarValores(pasivosNCorrientesMap) !== 0
+          ? (sumarValores(pasivosNCorrientesMap) /
+              sumarValores(pasivosNCorrientesMap2) -
+              1) *
+            100
+          : 0,
     });
     pasivosNCorrientes.value.push({
       nombre: "Total Pasivos",
@@ -581,21 +689,37 @@ const cargarDatosDesdeDB = async () => {
       valor2:
         sumarValores(pasivosNCorrientesMap2) +
         sumarValores(pasivosCorrientesMap2),
-      vAbsoluta:((sumarValores(pasivosNCorrientesMap) +
-      sumarValores(pasivosCorrientesMap)) - (sumarValores(pasivosNCorrientesMap2) +
-      sumarValores(pasivosCorrientesMap2))),
-      vRelativa: (sumarValores(pasivosNCorrientesMap2) +
-      sumarValores(pasivosCorrientesMap2)) !== 0 && (sumarValores(pasivosNCorrientesMap) +
-      sumarValores(pasivosCorrientesMap)) !== 0 ? (((sumarValores(pasivosNCorrientesMap) +
-      sumarValores(pasivosCorrientesMap))/(sumarValores(pasivosNCorrientesMap2) +
-      sumarValores(pasivosCorrientesMap2))) -1)*100 : 0,
+      vAbsoluta:
+        sumarValores(pasivosNCorrientesMap) +
+        sumarValores(pasivosCorrientesMap) -
+        (sumarValores(pasivosNCorrientesMap2) +
+          sumarValores(pasivosCorrientesMap2)),
+      vRelativa:
+        sumarValores(pasivosNCorrientesMap2) +
+          sumarValores(pasivosCorrientesMap2) !==
+          0 &&
+        sumarValores(pasivosNCorrientesMap) +
+          sumarValores(pasivosCorrientesMap) !==
+          0
+          ? ((sumarValores(pasivosNCorrientesMap) +
+              sumarValores(pasivosCorrientesMap)) /
+              (sumarValores(pasivosNCorrientesMap2) +
+                sumarValores(pasivosCorrientesMap2)) -
+              1) *
+            100
+          : 0,
     });
     patrimonios.value.push({
       nombre: "Total Capital Contable",
       valor: sumarValores(patrimoniosMap),
       valor2: sumarValores(patrimoniosMap2),
-      vAbsoluta:(sumarValores(patrimoniosMap) - sumarValores(patrimoniosMap2)),
-      vRelativa: sumarValores(patrimoniosMap2) !== 0 && sumarValores(patrimoniosMap) !== 0 ? ((sumarValores(patrimoniosMap)/sumarValores(patrimoniosMap2)) -1)*100 : 0,
+      vAbsoluta: sumarValores(patrimoniosMap) - sumarValores(patrimoniosMap2),
+      vRelativa:
+        sumarValores(patrimoniosMap2) !== 0 &&
+        sumarValores(patrimoniosMap) !== 0
+          ? (sumarValores(patrimoniosMap) / sumarValores(patrimoniosMap2) - 1) *
+            100
+          : 0,
     });
     patrimonios.value.push({
       nombre: "Total Pasivo y Capital Contable",
@@ -607,22 +731,32 @@ const cargarDatosDesdeDB = async () => {
         sumarValores(pasivosCorrientesMap2) +
         sumarValores(pasivosNCorrientesMap2) +
         sumarValores(patrimoniosMap2),
-      vAbsoluta:((sumarValores(pasivosCorrientesMap) +
+      vAbsoluta:
+        sumarValores(pasivosCorrientesMap) +
         sumarValores(pasivosNCorrientesMap) +
-        sumarValores(patrimoniosMap)) - (sumarValores(pasivosCorrientesMap2) +
-        sumarValores(pasivosNCorrientesMap2) +
-        sumarValores(patrimoniosMap2))),
-      vRelativa: (sumarValores(pasivosCorrientesMap2) +
-        sumarValores(pasivosNCorrientesMap2) +
-        sumarValores(patrimoniosMap2)) !== 0 && (sumarValores(pasivosCorrientesMap) +
-        sumarValores(pasivosNCorrientesMap) +
-        sumarValores(patrimoniosMap)) !== 0 ? (((sumarValores(pasivosCorrientesMap) +
-        sumarValores(pasivosNCorrientesMap) +
-        sumarValores(patrimoniosMap))/(sumarValores(pasivosCorrientesMap2) +
-        sumarValores(pasivosNCorrientesMap2) +
-        sumarValores(patrimoniosMap2))) -1)*100 : 0,
+        sumarValores(patrimoniosMap) -
+        (sumarValores(pasivosCorrientesMap2) +
+          sumarValores(pasivosNCorrientesMap2) +
+          sumarValores(patrimoniosMap2)),
+      vRelativa:
+        sumarValores(pasivosCorrientesMap2) +
+          sumarValores(pasivosNCorrientesMap2) +
+          sumarValores(patrimoniosMap2) !==
+          0 &&
+        sumarValores(pasivosCorrientesMap) +
+          sumarValores(pasivosNCorrientesMap) +
+          sumarValores(patrimoniosMap) !==
+          0
+          ? ((sumarValores(pasivosCorrientesMap) +
+              sumarValores(pasivosNCorrientesMap) +
+              sumarValores(patrimoniosMap)) /
+              (sumarValores(pasivosCorrientesMap2) +
+                sumarValores(pasivosNCorrientesMap2) +
+                sumarValores(patrimoniosMap2)) -
+              1) *
+            100
+          : 0,
     });
-
   } catch (error) {
     console.error("Error al cargar los datos desde la base de datos:", error);
   }
@@ -698,9 +832,13 @@ const formatCurrency2 = (value) => {
 onMounted(() => {
   cargarDatosDesdeDB();
 });
-watch([selectedYear, selectedYear2], () => {
-  cargarDatosDesdeDB();
-}, { immediate: true });
+watch(
+  [selectedYear, selectedYear2],
+  () => {
+    cargarDatosDesdeDB();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -733,5 +871,11 @@ watch([selectedYear, selectedYear2], () => {
   margin: 0 auto;
   width: 30%;
   margin-top: 2%;
+}
+.center-container {
+  display: flex; /* Activa Flexbox */
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 10px; /* Espaciado entre los botones */
+  margin-top: 3%;
 }
 </style>
